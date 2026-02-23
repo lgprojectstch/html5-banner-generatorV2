@@ -95,53 +95,53 @@
     .modal-title{font-size:1.4rem;font-weight:700;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:10px;}
     .modal-body{color:#555;margin-bottom:20px;}
     .modal-actions{display:flex;justify-content:center;gap:12px;}
+    
+    /* Crop Modal - Fixed */
     .crop-modal{position:fixed;inset:0;z-index:10001;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s ease;}
     .crop-modal.open{opacity:1;pointer-events:auto;}
-    .crop-modal-backdrop{position:absolute;inset:0;background:rgba(0,0,0,0.7);}
-    .crop-modal-content{position:relative;background:#1a1a2e;border-radius:16px;max-width:95vw;max-height:95vh;width:1200px;display:flex;flex-direction:column;box-shadow:0 25px 80px rgba(0,0,0,0.5);overflow:hidden;}
+    .crop-modal-backdrop{position:absolute;inset:0;background:rgba(0,0,0,0.85);}
+    .crop-modal-content{position:relative;background:#1a1a2e;border-radius:16px;max-width:95vw;max-height:95vh;width:1100px;display:flex;flex-direction:column;box-shadow:0 25px 80px rgba(0,0,0,0.5);overflow:hidden;}
     .crop-modal-header{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;background:#16213e;border-bottom:1px solid rgba(255,255,255,0.1);}
     .crop-modal-header h3{color:#fff;font-size:1.1rem;margin:0;display:flex;align-items:center;gap:10px;}
     .crop-modal-close{background:rgba(255,255,255,0.1);border:none;color:#fff;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:1rem;transition:all .2s ease;}
     .crop-modal-close:hover{background:var(--danger);}
-    .crop-modal-body{display:flex;flex:1;overflow:hidden;}
-    .crop-preview-side{flex:0 0 auto;padding:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#0f0f23;border-right:1px solid rgba(255,255,255,0.1);}
-    .crop-preview-label{color:rgba(255,255,255,0.6);font-size:.8rem;margin-bottom:12px;text-transform:uppercase;letter-spacing:1px;}
+    .crop-modal-body{display:flex;flex:1;overflow:hidden;min-height:500px;}
+    .crop-preview-side{flex:0 0 350px;padding:20px;display:flex;flex-direction:column;align-items:center;background:#0f0f23;border-right:1px solid rgba(255,255,255,0.1);}
+    .crop-preview-label{color:rgba(255,255,255,0.6);font-size:.75rem;margin-bottom:10px;text-transform:uppercase;letter-spacing:1px;}
     .crop-preview-frame{background:#222;border-radius:8px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,0.4);}
     .crop-preview-frame iframe{display:block;border:0;transform-origin:0 0;}
-    .crop-images-side{flex:1;padding:24px;overflow-y:auto;display:flex;flex-direction:column;gap:16px;}
-    .crop-images-label{color:rgba(255,255,255,0.6);font-size:.8rem;text-transform:uppercase;letter-spacing:1px;}
-    .crop-images-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:12px;}
-    .crop-image-thumb{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;cursor:pointer;border:3px solid transparent;transition:all .2s ease;}
-    .crop-image-thumb:hover{border-color:rgba(255,255,255,0.3);}
-    .crop-image-thumb.active{border-color:var(--success);box-shadow:0 0 20px rgba(79,172,254,0.4);}
-    .crop-image-thumb.has-crop::after{content:"✓";position:absolute;top:5px;right:5px;background:var(--success);color:#fff;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;}
+    .crop-images-side{flex:1;padding:20px;overflow-y:auto;display:flex;flex-direction:column;gap:16px;}
+    .crop-images-label{color:rgba(255,255,255,0.6);font-size:.75rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;}
+    .crop-images-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:10px;}
+    .crop-image-thumb{position:relative;aspect-ratio:1;border-radius:8px;overflow:hidden;cursor:pointer;border:3px solid transparent;transition:all .2s ease;}
+    .crop-image-thumb:hover{border-color:rgba(255,255,255,0.4);}
+    .crop-image-thumb.active{border-color:var(--success);box-shadow:0 0 20px rgba(79,172,254,0.5);}
+    .crop-image-thumb.has-crop::after{content:"✓";position:absolute;top:4px;right:4px;background:var(--success);color:#fff;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:bold;}
     .crop-image-thumb img{width:100%;height:100%;object-fit:cover;}
-    .crop-image-thumb .thumb-num{position:absolute;bottom:5px;left:5px;background:rgba(0,0,0,0.7);color:#fff;padding:2px 6px;border-radius:4px;font-size:.7rem;font-weight:700;}
-    .crop-editor-section{margin-top:16px;padding:20px;background:rgba(255,255,255,0.05);border-radius:12px;border:1px solid rgba(255,255,255,0.1);}
-    .crop-editor-label{color:#fff;font-size:.9rem;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
-    .crop-canvas-wrap{position:relative;width:100%;max-width:400px;margin:0 auto;background:#000;border-radius:8px;overflow:hidden;cursor:move;}
-    .crop-canvas-wrap img{display:block;width:100%;user-select:none;pointer-events:none;}
-    .crop-frame{position:absolute;border:3px solid var(--success);box-shadow:0 0 0 9999px rgba(0,0,0,0.5);pointer-events:none;}
-    .crop-controls{display:flex;gap:12px;margin-top:16px;justify-content:center;flex-wrap:wrap;}
-    .crop-controls .btn{padding:10px 20px;font-size:.9rem;}
-    .crop-hint{color:rgba(255,255,255,0.5);font-size:.8rem;text-align:center;margin-top:12px;}
-    @media(max-width:1100px){.top-panels{grid-template-columns:1fr 1fr;}.crop-modal-body{flex-direction:column;}.crop-preview-side{border-right:none;border-bottom:1px solid rgba(255,255,255,0.1);padding:16px;}}
-    @media(max-width:768px){.top-panels{grid-template-columns:1fr;}.format-grid-compact{grid-template-columns:repeat(auto-fill,minmax(100px,1fr));}}
+    .crop-image-thumb .thumb-num{position:absolute;bottom:4px;left:4px;background:rgba(0,0,0,0.8);color:#fff;padding:2px 5px;border-radius:4px;font-size:.65rem;font-weight:700;}
+    .crop-editor-section{margin-top:12px;padding:16px;background:rgba(255,255,255,0.08);border-radius:12px;border:1px solid rgba(255,255,255,0.15);}
+    .crop-editor-label{color:#fff;font-size:.85rem;font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+    .crop-canvas-container{position:relative;width:100%;height:250px;background:#000;border-radius:8px;overflow:hidden;cursor:grab;user-select:none;}
+    .crop-canvas-container:active{cursor:grabbing;}
+    .crop-canvas-container img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;pointer-events:none;user-select:none;-webkit-user-drag:none;}
+    .crop-position-indicator{position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,0.7);color:#fff;padding:4px 8px;border-radius:4px;font-size:.7rem;font-family:monospace;}
+    .crop-controls{display:flex;gap:10px;margin-top:12px;justify-content:center;flex-wrap:wrap;}
+    .crop-controls .btn{padding:8px 16px;font-size:.85rem;}
+    .crop-hint{color:rgba(255,255,255,0.5);font-size:.75rem;text-align:center;margin-top:10px;}
+    @media(max-width:900px){.top-panels{grid-template-columns:1fr;}.crop-modal-body{flex-direction:column;}.crop-preview-side{flex:0 0 auto;border-right:none;border-bottom:1px solid rgba(255,255,255,0.1);}}
   </style>
 </head>
 <body>
-  <div class="pw-gate" id="pwGate" aria-hidden="false">
+  <div class="pw-gate" id="pwGate">
     <div class="pw-card">
       <h2><i class="fas fa-lock"></i> Zugang</h2>
       <p>Bitte gib das Passwort ein, um fortzufahren.</p>
       <div class="input-group" style="margin-top:12px;">
         <label for="pwInput">Passwort</label>
-        <input type="password" id="pwInput" placeholder="Passwort eingeben" autocomplete="current-password">
+        <input type="password" id="pwInput" placeholder="Passwort eingeben">
       </div>
       <div class="pw-error" id="pwError">Falsches Passwort.</div>
-      <div class="pw-actions">
-        <button class="btn btn-primary" id="pwSubmit" type="button">Weiter <i class="fas fa-arrow-right"></i></button>
-      </div>
+      <div class="pw-actions"><button class="btn btn-primary" id="pwSubmit">Weiter <i class="fas fa-arrow-right"></i></button></div>
     </div>
   </div>
 
@@ -155,12 +155,10 @@
       <div class="card">
         <div class="format-section-header">
           <h2><i class="fas fa-th-large"></i> Banner-Formate auswählen</h2>
-          <button class="btn-select-all" id="selectAllBtn" type="button"><i class="fas fa-check-double"></i> Alle auswählen</button>
+          <button class="btn-select-all" id="selectAllBtn"><i class="fas fa-check-double"></i> Alle auswählen</button>
         </div>
         <div class="format-grid-compact" id="formatGrid"></div>
-        <div class="button-group">
-          <button class="btn btn-primary" id="nextStep1" disabled>Weiter <i class="fas fa-arrow-right"></i></button>
-        </div>
+        <div class="button-group"><button class="btn btn-primary" id="nextStep1" disabled>Weiter <i class="fas fa-arrow-right"></i></button></div>
       </div>
     </div>
 
@@ -184,34 +182,16 @@
                 <label for="templateSelect">Template</label>
                 <select id="templateSelect"><option value="standard">Standard</option></select>
               </div>
-              <div class="template-meta">Template-Einstellungen (Farben werden vom Master-Template übernommen)</div>
+              <div class="template-meta">Farben werden vom Master-Template übernommen</div>
             </div>
-            <div class="input-group">
-              <label for="headline">Headline</label>
-              <input type="text" id="headline" value="Bereit für dein Workout?">
-              <div class="char-hint" id="headlineHint"></div>
-            </div>
-            <div class="input-group">
-              <label for="subline">Subline</label>
-              <input type="text" id="subline" value="Indoor & Outdoor">
-              <div class="char-hint" id="sublineHint"></div>
-            </div>
-            <div class="input-group">
-              <label for="ctaText">CTA Text</label>
-              <input type="text" id="ctaText" value="Jetzt shoppen">
-              <div class="char-hint" id="ctaHint"></div>
-            </div>
+            <div class="input-group"><label for="headline">Headline</label><input type="text" id="headline" value="Bereit für dein Workout?"><div class="char-hint" id="headlineHint"></div></div>
+            <div class="input-group"><label for="subline">Subline</label><input type="text" id="subline" value="Indoor & Outdoor"><div class="char-hint" id="sublineHint"></div></div>
+            <div class="input-group"><label for="ctaText">CTA Text</label><input type="text" id="ctaText" value="Jetzt shoppen"><div class="char-hint" id="ctaHint"></div></div>
           </div>
           <div class="card">
             <h3><i class="fas fa-link"></i> Click-URL</h3>
-            <div class="input-group">
-              <label for="zipName">Naming (für ZIP-Datei)</label>
-              <input type="text" id="zipName" placeholder="z.B. KW02_BackToGym" required>
-            </div>
-            <div class="input-group">
-              <label for="clickUrl">Ziel-URL</label>
-              <input type="url" id="clickUrl" placeholder="https://example.com" required>
-            </div>
+            <div class="input-group"><label for="zipName">Naming (für ZIP-Datei)</label><input type="text" id="zipName" placeholder="z.B. KW02_BackToGym"></div>
+            <div class="input-group"><label for="clickUrl">Ziel-URL</label><input type="url" id="clickUrl" placeholder="https://example.com"></div>
             <p style="margin-top:14px;font-size:0.9em;color:#6b7280;">Hinweis: <b>utm_source=dbm</b> &amp; <b>utm_medium=cpm</b> werden automatisch ergänzt.</p>
           </div>
         </div>
@@ -224,18 +204,15 @@
           <div class="card">
             <div class="preview-head">
               <div class="title"><i class="fas fa-eye"></i> Vorschau</div>
-              <button class="toggle-preview" id="togglePreviewBtn" type="button">Ausblenden</button>
+              <button class="toggle-preview" id="togglePreviewBtn">Ausblenden</button>
             </div>
             <div class="preview-grid" id="previewGrid"></div>
             <details class="preview-details">
               <summary>Details <i class="fas fa-chevron-down"></i></summary>
               <div class="details-body">
-                <div class="details-label">Naming</div>
-                <div id="detailName">-</div>
-                <div class="details-label" style="margin-top:12px;">Final clickTag</div>
-                <div class="mono" id="detailClickTag">-</div>
-                <div class="details-label" style="margin-top:12px;">Impr.-Tag</div>
-                <div class="mono" id="detailImprTag">-</div>
+                <div class="details-label">Naming</div><div id="detailName">-</div>
+                <div class="details-label" style="margin-top:12px;">Final clickTag</div><div class="mono" id="detailClickTag">-</div>
+                <div class="details-label" style="margin-top:12px;">Impr.-Tag</div><div class="mono" id="detailImprTag">-</div>
               </div>
             </details>
           </div>
@@ -244,12 +221,12 @@
     </div>
   </div>
 
-  <div class="modal" id="exportModal" aria-hidden="true">
+  <div class="modal" id="exportModal">
     <div class="modal-backdrop" id="exportModalBackdrop"></div>
     <div class="modal-card">
       <div class="modal-title"><i class="fas fa-check-circle" style="color:var(--success);"></i> Download erstellt</div>
       <div class="modal-body">Deine ZIP-Dateien wurden erstellt und der Download wurde gestartet.</div>
-      <div class="modal-actions"><button class="btn btn-primary" id="exportModalClose">Zurück zu den Eingaben</button></div>
+      <div class="modal-actions"><button class="btn btn-primary" id="exportModalClose">Zurück</button></div>
     </div>
   </div>
 
@@ -257,7 +234,7 @@
     <div class="crop-modal-backdrop" id="cropModalBackdrop"></div>
     <div class="crop-modal-content">
       <div class="crop-modal-header">
-        <h3><i class="fas fa-crop-alt"></i> Bildausschnitt anpassen – <span id="cropFormatTitle">300x250</span></h3>
+        <h3><i class="fas fa-crop-alt"></i> Bildausschnitt – <span id="cropFormatTitle">300x250</span></h3>
         <button class="crop-modal-close" id="cropModalClose"><i class="fas fa-times"></i></button>
       </div>
       <div class="crop-modal-body">
@@ -268,17 +245,17 @@
           </div>
         </div>
         <div class="crop-images-side">
-          <div class="crop-images-label">Bilder auswählen zum Anpassen</div>
+          <div class="crop-images-label">Bild auswählen</div>
           <div class="crop-images-grid" id="cropImagesGrid"></div>
           <div class="crop-editor-section" id="cropEditorSection" style="display:none;">
-            <div class="crop-editor-label"><i class="fas fa-arrows-alt"></i> Bild verschieben – <span id="cropEditorImageName">Bild 1</span></div>
-            <div class="crop-canvas-wrap" id="cropCanvasWrap">
+            <div class="crop-editor-label"><i class="fas fa-arrows-alt"></i> <span id="cropEditorImageName">Bild 1</span> verschieben</div>
+            <div class="crop-canvas-container" id="cropCanvasContainer">
               <img id="cropEditorImage" src="" alt="Crop">
-              <div class="crop-frame" id="cropFrame"></div>
+              <div class="crop-position-indicator" id="cropPosIndicator">50% / 50%</div>
             </div>
-            <div class="crop-hint">Bild ziehen um den Ausschnitt anzupassen</div>
+            <div class="crop-hint">Klicken und ziehen um den Bildausschnitt zu verschieben</div>
             <div class="crop-controls">
-              <button class="btn btn-secondary" id="cropResetBtn"><i class="fas fa-undo"></i> Zurücksetzen</button>
+              <button class="btn btn-secondary" id="cropResetBtn"><i class="fas fa-undo"></i> Reset</button>
               <button class="btn btn-success" id="cropSaveBtn"><i class="fas fa-check"></i> Speichern</button>
             </div>
           </div>
@@ -288,322 +265,7 @@
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-  <script>
-    const GATE_PASSWORD='html5',ASSETS_DIR='assets',LOGO_ASSET=ASSETS_DIR+'/Logo.png';
-    const FONT_FILES=[ASSETS_DIR+'/fonts/InterstateWGL-Bold.woff2',ASSETS_DIR+'/fonts/InterstateWGL-Regular.woff2'];
-    const FORMAT_CONFIGS={"160x600":{w:160,h:600,layout:"v",topRatio:0.35,leftRatio:0.55,padX:10,headlineLines:2,logoH:30,gapLogoHeadline:30,gapHeadlineSubline:7,gapSublineCTA:30,gapCTASlider:10,headlineFs:18,sublineFs:12,ctaFs:12,ctaPadY:8,ctaPadX:9,headlinePulseMaxScale:1.25,headlinePulseTotalMs:1800,sliderImgScale:1,dwellMs:2000,slideMs:520,sparkLen:"10px",sparkW:"3px",sparkAngle:"18deg",sparkGap:"10px",sparkOffsetX:"5px",sparkOffsetY:"-2px",sparkHardSideOffset:"52px",label:"Skyscraper"},"300x250":{w:300,h:250,layout:"h",leftRatio:0.56,topRatio:0.42,padX:12,headlineLines:2,logoH:30,gapLogoHeadline:35,gapHeadlineSubline:7,gapSublineCTA:35,gapCTASlider:10,headlineFs:18,sublineFs:13,ctaFs:12,ctaPadY:8,ctaPadX:12,headlinePulseMaxScale:1.28,headlinePulseTotalMs:1800,sliderImgScale:1,dwellMs:2000,slideMs:520,sparkLen:"10px",sparkW:"3px",sparkAngle:"18deg",sparkGap:"10px",sparkOffsetX:"5px",sparkOffsetY:"-2px",sparkHardSideOffset:"52px",label:"Medium Rect"},"300x600":{w:300,h:600,layout:"v",topRatio:0.40,leftRatio:0.55,padX:14,headlineLines:2,logoH:30,gapLogoHeadline:25,gapHeadlineSubline:10,gapSublineCTA:25,gapCTASlider:12,headlineFs:22,sublineFs:20,ctaFs:15,ctaPadY:9,ctaPadX:14,headlinePulseMaxScale:1.28,headlinePulseTotalMs:1900,sliderImgScale:1,dwellMs:2000,slideMs:540,sparkLen:"10px",sparkW:"3px",sparkAngle:"18deg",sparkGap:"12px",sparkOffsetX:"10px",sparkOffsetY:"-2px",sparkHardSideOffset:"60px",label:"Half Page"},"320x100":{w:320,h:100,layout:"h",leftRatio:0.62,topRatio:0.42,padX:10,headlineLines:1,logoH:18,gapLogoHeadline:8,gapHeadlineSubline:3,gapSublineCTA:8,gapCTASlider:8,headlineFs:12,sublineFs:9,ctaFs:9,ctaPadY:6,ctaPadX:10,headlinePulseMaxScale:1.22,headlinePulseTotalMs:1600,sliderImgScale:1,dwellMs:2000,slideMs:500,sparkLen:"6px",sparkW:"2px",sparkAngle:"18deg",sparkGap:"8px",sparkOffsetX:"2px",sparkOffsetY:"-2px",sparkHardSideOffset:"42px",label:"Mobile Banner"},"320x480":{w:320,h:480,layout:"v",topRatio:0.44,leftRatio:0.55,padX:14,headlineLines:2,logoH:30,gapLogoHeadline:20,gapHeadlineSubline:7,gapSublineCTA:20,gapCTASlider:12,headlineFs:25,sublineFs:16,ctaFs:13,ctaPadY:9,ctaPadX:14,headlinePulseMaxScale:1.2,headlinePulseTotalMs:2000,sliderImgScale:1,dwellMs:2000,slideMs:520,sparkLen:"10px",sparkW:"3px",sparkAngle:"18deg",sparkGap:"12px",sparkOffsetX:"6px",sparkOffsetY:"-2px",sparkHardSideOffset:"60px",label:"Mobile Interst."},"336x280":{w:336,h:280,layout:"h",leftRatio:0.56,topRatio:0.42,padX:12,headlineLines:2,logoH:30,gapLogoHeadline:40,gapHeadlineSubline:10,gapSublineCTA:40,gapCTASlider:10,headlineFs:20,sublineFs:14,ctaFs:14,ctaPadY:8,ctaPadX:12,headlinePulseMaxScale:1.28,headlinePulseTotalMs:1800,sliderImgScale:1,dwellMs:2000,slideMs:520,sparkLen:"10px",sparkW:"3px",sparkAngle:"18deg",sparkGap:"12px",sparkOffsetX:"10px",sparkOffsetY:"-2px",sparkHardSideOffset:"54px",label:"Large Rect"},"360x640":{w:360,h:640,layout:"v",topRatio:0.42,leftRatio:0.55,padX:16,headlineLines:2,logoH:35,gapLogoHeadline:30,gapHeadlineSubline:7,gapSublineCTA:30,gapCTASlider:12,headlineFs:30,sublineFs:17,ctaFs:15,ctaPadY:9,ctaPadX:18,headlinePulseMaxScale:1.25,headlinePulseTotalMs:2000,sliderImgScale:1,dwellMs:2000,slideMs:540,sparkLen:"10px",sparkW:"3px",sparkAngle:"18deg",sparkGap:"12px",sparkOffsetX:"10px",sparkOffsetY:"-2px",sparkHardSideOffset:"64px",label:"Mobile Full"},"375x667":{w:375,h:667,layout:"v",topRatio:0.42,leftRatio:0.55,padX:16,headlineLines:2,logoH:35,gapLogoHeadline:35,gapHeadlineSubline:7,gapSublineCTA:35,gapCTASlider:12,headlineFs:32,sublineFs:17,ctaFs:16,ctaPadY:9,ctaPadX:18,headlinePulseMaxScale:1.30,headlinePulseTotalMs:2000,sliderImgScale:1,dwellMs:2000,slideMs:540,sparkLen:"10px",sparkW:"3px",sparkAngle:"18deg",sparkGap:"12px",sparkOffsetX:"12px",sparkOffsetY:"-2px",sparkHardSideOffset:"64px",label:"iPhone Full"},"640x480":{w:640,h:480,layout:"h",leftRatio:0.55,topRatio:0.42,padX:18,headlineLines:2,logoH:50,gapLogoHeadline:80,gapHeadlineSubline:30,gapSublineCTA:80,gapCTASlider:14,headlineFs:40,sublineFs:25,ctaFs:20,ctaPadY:10,ctaPadX:20,headlinePulseMaxScale:1.28,headlinePulseTotalMs:2000,sliderImgScale:1,dwellMs:2000,slideMs:560,sparkLen:"13px",sparkW:"4px",sparkAngle:"18deg",sparkGap:"14px",sparkOffsetX:"23px",sparkOffsetY:"-2px",sparkHardSideOffset:"70px",label:"Video 4:3"},"800x600":{w:800,h:600,layout:"h",leftRatio:0.56,topRatio:0.42,padX:22,headlineLines:2,logoH:60,gapLogoHeadline:80,gapHeadlineSubline:45,gapSublineCTA:120,gapCTASlider:14,headlineFs:55,sublineFs:40,ctaFs:24,ctaPadY:10,ctaPadX:25,headlinePulseMaxScale:1.20,headlinePulseTotalMs:2000,sliderImgScale:1,dwellMs:2000,slideMs:560,sparkLen:"13px",sparkW:"4px",sparkAngle:"18deg",sparkGap:"14px",sparkOffsetX:"43px",sparkOffsetY:"-2px",sparkHardSideOffset:"70px",label:"SVGA"},"970x250":{w:970,h:250,layout:"h",leftRatio:0.55,topRatio:0.42,padX:18,headlineLines:1,logoH:34,gapLogoHeadline:28,gapHeadlineSubline:6,gapSublineCTA:26,gapCTASlider:0,headlineFs:34,sublineFs:22,ctaFs:14,ctaPadY:10,ctaPadX:22,headlinePulseMaxScale:1.3,headlinePulseTotalMs:2000,sliderImgScale:1,dwellMs:2000,slideMs:520,sparkLen:"10px",sparkW:"3px",sparkAngle:"18deg",sparkGap:"12px",sparkOffsetX:"14px",sparkOffsetY:"-2px",sparkHardSideOffset:"60px",label:"Billboard",dual:true},"800x250":{w:800,h:250,layout:"h",leftRatio:0.50,topRatio:0.42,padX:14,headlineLines:1,logoH:32,gapLogoHeadline:28,gapHeadlineSubline:6,gapSublineCTA:26,gapCTASlider:0,headlineFs:30,sublineFs:20,ctaFs:14,ctaPadY:10,ctaPadX:20,headlinePulseMaxScale:1.15,headlinePulseTotalMs:2000,sliderImgScale:1,dwellMs:2000,slideMs:520,sparkLen:"10px",sparkW:"3px",sparkAngle:"18deg",sparkGap:"12px",sparkOffsetX:"12px",sparkOffsetY:"-2px",sparkHardSideOffset:"60px",label:"Leaderboard+",dual:true}};
-    const FORMAT_ORDER=["300x250","300x600","160x600","336x280","320x100","320x480","360x640","375x667","640x480","800x600","970x250","800x250"];
-    const IMAGE_IMPORT={maxLongEdge:1200,quality:0.76,background:'#ffffff'};
-    const TEXT_LIMITS={headline:25,subline:30,ctaText:17};
-    const IMPR_TAG='<img src="https://tagm.tchibo.de/ai.aspx?extProvId=300&extProvApi=129768&extPu=tchibo-dv360&extLi=${INSERTION_ORDER_ID}&extPm=${CAMPAIGN_ID}&extCr=${CREATIVE_ID}&adslotid=${PUBLISHER_ID}&gdpr=${GDPR}&gdpr_consent=${GDPR_CONSENT_312}" style="display:none">';
-    
-    let selectedFormats=[],uploadedImages=[],cropSettings={},cachedLogoDataUrl=null,previewHtmlUrls=[];
-    let appData={headline:'Bereit für dein Workout?',subline:'Indoor & Outdoor',ctaText:'Jetzt shoppen',landingUrl:'',zipName:''};
-    let currentCropFormat=null,currentCropImageIndex=null,cropDragStart=null,cropImageOffset={x:50,y:50};
-    
-    const pwGate=document.getElementById('pwGate'),pwInput=document.getElementById('pwInput'),pwSubmit=document.getElementById('pwSubmit'),pwError=document.getElementById('pwError');
-    const formatGrid=document.getElementById('formatGrid'),selectAllBtn=document.getElementById('selectAllBtn'),nextStep1Btn=document.getElementById('nextStep1');
-    const previewSection=document.getElementById('previewSection'),previewGrid=document.getElementById('previewGrid');
-    const detailNameEl=document.getElementById('detailName'),detailClickTagEl=document.getElementById('detailClickTag'),detailImprTagEl=document.getElementById('detailImprTag');
-    const exportModal=document.getElementById('exportModal'),exportModalCloseBtn=document.getElementById('exportModalClose'),exportModalBackdrop=document.getElementById('exportModalBackdrop');
-    const cropModal=document.getElementById('cropModal'),cropModalBackdrop=document.getElementById('cropModalBackdrop'),cropModalClose=document.getElementById('cropModalClose');
-    const cropFormatTitle=document.getElementById('cropFormatTitle'),cropPreviewFrame=document.getElementById('cropPreviewFrame'),cropPreviewIframe=document.getElementById('cropPreviewIframe');
-    const cropImagesGrid=document.getElementById('cropImagesGrid'),cropEditorSection=document.getElementById('cropEditorSection'),cropEditorImageName=document.getElementById('cropEditorImageName');
-    const cropEditorImage=document.getElementById('cropEditorImage'),cropCanvasWrap=document.getElementById('cropCanvasWrap'),cropFrame=document.getElementById('cropFrame');
-    const cropResetBtn=document.getElementById('cropResetBtn'),cropSaveBtn=document.getElementById('cropSaveBtn');
-    const uploadArea=document.getElementById('uploadArea'),imageInput=document.getElementById('imageUpload'),uploadedContainer=document.getElementById('uploadedImages');
-
-    function unlockGate(){pwGate.style.display='none';}
-    function showPwError(){pwError.style.display='block';pwInput.classList.add('input-over');}
-    function clearPwError(){pwError.style.display='none';pwInput.classList.remove('input-over');}
-    function checkPassword(){if(pwInput.value.trim()===GATE_PASSWORD){clearPwError();unlockGate();}else{showPwError();pwInput.focus();}}
-    function showExportModal(){exportModal.classList.add('open');}
-    function hideExportModal(){exportModal.classList.remove('open');}
-    function showStep(n){document.querySelectorAll('.step-content').forEach(s=>s.classList.remove('active'));document.getElementById('step'+n)?.classList.add('active');}
-    function sanitizeFilePart(n){return(n||'').trim().replace(/\s+/g,'_').replace(/[^\w.\-]+/g,'_').replace(/^_+|_+$/g,'')||'banner';}
-    function renumberImages(){uploadedImages.forEach((img,i)=>img.name=(i+1)+'.jpg');}
-    function revokeAllObjectUrls(){uploadedImages.forEach(img=>{if(img.url)URL.revokeObjectURL(img.url);});}
-    function revokePreviewHtmlUrls(){previewHtmlUrls.forEach(u=>URL.revokeObjectURL(u));previewHtmlUrls=[];}
-    function getCropPosition(format,idx){return cropSettings[format]?.[idx]||{x:50,y:50};}
-    
-    function renderFormatGrid(){
-      formatGrid.innerHTML='';
-      FORMAT_ORDER.forEach(key=>{
-        const cfg=FORMAT_CONFIGS[key];
-        const chip=document.createElement('label');
-        chip.className='format-chip';
-        chip.innerHTML='<input type="checkbox" value="'+key+'"><div class="format-name">'+key+'</div><div class="format-type">'+cfg.label+'</div><span class="chip-check"><i class="fas fa-check"></i></span>';
-        formatGrid.appendChild(chip);
-        chip.querySelector('input').addEventListener('change',updateFormatSelection);
-      });
-    }
-    
-    function updateFormatSelection(){
-      selectedFormats=[];
-      formatGrid.querySelectorAll('input:checked').forEach(cb=>selectedFormats.push(cb.value));
-      nextStep1Btn.disabled=selectedFormats.length===0;
-      const all=selectedFormats.length===FORMAT_ORDER.length;
-      selectAllBtn.classList.toggle('active',all);
-      selectAllBtn.innerHTML=all?'<i class="fas fa-times"></i> Auswahl aufheben':'<i class="fas fa-check-double"></i> Alle auswählen';
-    }
-    
-    function toggleSelectAll(){
-      const all=selectedFormats.length===FORMAT_ORDER.length;
-      formatGrid.querySelectorAll('input').forEach(cb=>cb.checked=!all);
-      updateFormatSelection();
-    }
-    
-    async function convertToJpegBlob(file,opts={}){
-      const{maxLongEdge=1200,quality=0.76,background='#ffffff'}=opts;
-      const bitmap=await createImageBitmap(file);
-      const scale=Math.max(bitmap.width,bitmap.height)>maxLongEdge?maxLongEdge/Math.max(bitmap.width,bitmap.height):1;
-      const w=Math.round(bitmap.width*scale),h=Math.round(bitmap.height*scale);
-      const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;
-      const ctx=canvas.getContext('2d',{alpha:false});ctx.fillStyle=background;ctx.fillRect(0,0,w,h);ctx.drawImage(bitmap,0,0,w,h);
-      return new Promise(r=>canvas.toBlob(r,'image/jpeg',quality));
-    }
-    
-    function updateCharUI(el,hint,max){const len=el.value.length;hint.textContent=len+'/'+max+' Zeichen';const over=len>max;hint.classList.toggle('over',over);el.classList.toggle('input-over',over);}
-    function bindCharLimit(id,hintId,max,cb){const el=document.getElementById(id),hint=document.getElementById(hintId);updateCharUI(el,hint,max);el.addEventListener('input',()=>{updateCharUI(el,hint,max);if(cb)cb(el.value);});}
-    
-    function getFinalClickTag(){
-      let url=(appData.landingUrl||'').trim();if(!url)return'';
-      if(!/^https?:\/\//i.test(url))url='https://'+url;
-      try{const u=new URL(url);if(!u.searchParams.has('utm_source'))u.searchParams.set('utm_source','dbm');if(!u.searchParams.has('utm_medium'))u.searchParams.set('utm_medium','cpm');return'https://tagm.tchibo.de/cl.aspx?extProvId=300&extProvApi=129768&extPu=tchibo-dv360&extLi=${INSERTION_ORDER_ID}&extPm=${CAMPAIGN_ID}&extCr=${CREATIVE_ID}&adslotid=${PUBLISHER_ID}&gdpr=${GDPR}&gdpr_consent=${GDPR_CONSENT_312}&url='+encodeURIComponent(u.toString());}catch(e){return'';}
-    }
-    
-    async function getLogoDataUrl(){
-      if(cachedLogoDataUrl)return cachedLogoDataUrl;
-      try{const res=await fetch(LOGO_ASSET);const blob=await res.blob();return cachedLogoDataUrl=await new Promise((r,j)=>{const fr=new FileReader();fr.onload=()=>r(fr.result);fr.onerror=j;fr.readAsDataURL(blob);});}catch(e){return null;}
-    }
-    
-    async function fetchBlob(url){const res=await fetch(url);return res.blob();}
-    
-    uploadArea.addEventListener('dragover',e=>{e.preventDefault();uploadArea.classList.add('dragover');});
-    uploadArea.addEventListener('dragleave',()=>uploadArea.classList.remove('dragover'));
-    uploadArea.addEventListener('drop',async e=>{e.preventDefault();uploadArea.classList.remove('dragover');await processImageFiles([...e.dataTransfer.files].filter(f=>f.type.startsWith('image/')));});
-    imageInput.addEventListener('change',async e=>{await processImageFiles([...e.target.files]);e.target.value='';});
-    
-    async function processImageFiles(files){
-      for(const file of files){
-        try{const blob=await convertToJpegBlob(file,IMAGE_IMPORT);uploadedImages.push({name:(uploadedImages.length+1)+'.jpg',blob,url:URL.createObjectURL(blob),original:file.name});}catch(e){}
-      }
-      renumberImages();updateImageDisplay();
-    }
-    
-    let dragSrcIndex=null;
-    function moveImage(from,to){const item=uploadedImages.splice(from,1)[0];uploadedImages.splice(to,0,item);renumberImages();updateImageDisplay();}
-    
-    function updateImageDisplay(){
-      uploadedContainer.innerHTML='';
-      uploadedImages.forEach((img,i)=>{
-        const div=document.createElement('div');div.className='uploaded-image';div.draggable=true;div.dataset.index=i;
-        div.innerHTML='<img src="'+img.url+'"><button class="remove" type="button"><i class="fas fa-times"></i></button><span class="number">'+(i+1)+'</span>';
-        div.querySelector('.remove').addEventListener('click',e=>{e.stopPropagation();removeImage(i);});
-        div.addEventListener('dragstart',e=>{dragSrcIndex=i;div.classList.add('dragging');});
-        div.addEventListener('dragend',()=>{div.classList.remove('dragging');dragSrcIndex=null;});
-        div.addEventListener('dragover',e=>{e.preventDefault();div.classList.add('dragover');});
-        div.addEventListener('dragleave',()=>div.classList.remove('dragover'));
-        div.addEventListener('drop',e=>{e.preventDefault();div.classList.remove('dragover');const to=+div.dataset.index;if(dragSrcIndex!==null&&dragSrcIndex!==to)moveImage(dragSrcIndex,dragSrcIndex<to?to-1:to);});
-        uploadedContainer.appendChild(div);
-      });
-    }
-    
-    function removeImage(i){if(uploadedImages[i]?.url)URL.revokeObjectURL(uploadedImages[i].url);uploadedImages.splice(i,1);renumberImages();updateImageDisplay();}
-
-    function generateFormatHTML(formatKey,opts={}){
-      const cfg=FORMAT_CONFIGS[formatKey],{mode='export'}=opts,isDual=cfg.dual===true;
-      const imageData=uploadedImages.map((img,idx)=>{const crop=getCropPosition(formatKey,idx);return{src:mode==='preview'?img.url:img.name,posX:crop.x,posY:crop.y};});
-      const clickTag=getFinalClickTag(),headline=appData.headline||'Headline',subline=appData.subline||'Subline',ctaText=appData.ctaText||'CTA';
-      const logoSrc=mode==='preview'&&cachedLogoDataUrl?cachedLogoDataUrl:'Logo.png';
-      
-      return `<!doctype html><html lang="de"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="ad.size" content="width=${cfg.w},height=${cfg.h}"/><title>${formatKey}_Banner</title>
-<link rel="preload" href="fonts/InterstateWGL-Regular.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="fonts/InterstateWGL-Bold.woff2" as="font" type="font/woff2" crossorigin>
-<style>@font-face{font-family:"InterstateWGL";src:url("fonts/InterstateWGL-Regular.woff2") format("woff2");font-weight:400;font-style:normal;font-display:block;}@font-face{font-family:"InterstateWGL";src:url("fonts/InterstateWGL-Bold.woff2") format("woff2");font-weight:700;font-style:normal;font-display:block;}
-*{box-sizing:border-box;}html,body{margin:0;padding:0;}
-:root{--w:${cfg.w}px;--h:${cfg.h}px;--bgColor:#8AA3A1;--headlineColor:#FFF;--sublineColor:#FFF;--ctaFillColor:#FFF;--ctaBorderColor:#FFF;--ctaTextColor:#8AA3A1;--highlightRGB:255,255,255;--frameW:1px;--padX:${cfg.padX}px;--leftRatio:${cfg.leftRatio};--topRatio:${cfg.topRatio};--logoH:${cfg.logoH}px;--gapLogoHeadline:${cfg.gapLogoHeadline}px;--gapHeadlineSubline:${cfg.gapHeadlineSubline}px;--gapSublineCTA:${cfg.gapSublineCTA}px;--gapCTASlider:${cfg.gapCTASlider}px;--headlineFs:${cfg.headlineFs}px;--sublineFs:${cfg.sublineFs}px;--ctaFs:${cfg.ctaFs}px;--ctaPadY:${cfg.ctaPadY}px;--ctaPadX:${cfg.ctaPadX}px;--headlineLH:1.08;--sublineLH:1.12;--lineClampHeadline:${cfg.headlineLines};--lineClampSubline:1;--heroBorderW:5px;--heroBorderAlpha:0.95;--heroBorderFalloff:0.30;--heroBorderDur:180ms;--ctaBounceDur:2000ms;--sliderImgScale:${cfg.sliderImgScale};--sparkLen:${cfg.sparkLen};--sparkW:${cfg.sparkW};--sparkAngle:${cfg.sparkAngle};--sparkGap:${cfg.sparkGap};--sparkOffsetX:${cfg.sparkOffsetX};--sparkOffsetY:${cfg.sparkOffsetY};--sparkHardSideOffset:${cfg.sparkHardSideOffset};--sparksDisplay:block;--sparkColor:#FFF;}
-.ad{width:var(--w);height:var(--h);overflow:hidden;background:var(--bgColor);border:var(--frameW) solid var(--bgColor);cursor:pointer;user-select:none;font-family:"InterstateWGL",Arial,sans-serif;position:relative;}
-.wrap{position:absolute;inset:0;display:flex;width:100%;height:100%;}.wrap.layout-h{flex-direction:row;}.wrap.layout-v{flex-direction:column;}
-.left{position:relative;overflow:hidden;background:var(--bgColor);z-index:2;display:flex;flex-direction:column;align-items:center;text-align:center;justify-content:center;padding:0 var(--padX);}
-.wrap.layout-h .left{width:calc(var(--leftRatio)*100%);height:100%;}.wrap.layout-h .right{width:calc((1 - var(--leftRatio))*100%);height:100%;margin-left:auto;}
-.wrap.layout-v .left{width:100%;height:calc(var(--topRatio)*100%);}.wrap.layout-v .right{width:100%;height:calc((1 - var(--topRatio))*100%);}
-.left::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity var(--heroBorderDur) ease;z-index:10;background:linear-gradient(to bottom,rgba(var(--highlightRGB),var(--heroBorderAlpha)) 0%,rgba(var(--highlightRGB),var(--heroBorderAlpha)) calc(var(--heroBorderFalloff)*100%),rgba(var(--highlightRGB),0) 100%) top/100% var(--heroBorderW) no-repeat,linear-gradient(to top,rgba(var(--highlightRGB),var(--heroBorderAlpha)) 0%,rgba(var(--highlightRGB),var(--heroBorderAlpha)) calc(var(--heroBorderFalloff)*100%),rgba(var(--highlightRGB),0) 100%) bottom/100% var(--heroBorderW) no-repeat,linear-gradient(to right,rgba(var(--highlightRGB),var(--heroBorderAlpha)) 0%,rgba(var(--highlightRGB),var(--heroBorderAlpha)) calc(var(--heroBorderFalloff)*100%),rgba(var(--highlightRGB),0) 100%) left/var(--heroBorderW) 100% no-repeat,linear-gradient(to left,rgba(var(--highlightRGB),var(--heroBorderAlpha)) 0%,rgba(var(--highlightRGB),var(--heroBorderAlpha)) calc(var(--heroBorderFalloff)*100%),rgba(var(--highlightRGB),0) 100%) right/var(--heroBorderW) 100% no-repeat;}.left:hover::after{opacity:1;}
-.logo img{height:var(--logoH);width:auto;display:block;filter:brightness(0) invert(1);}
-.headline{margin:var(--gapLogoHeadline) 0 0 0;font-size:var(--headlineFs);line-height:var(--headlineLH);font-weight:700;color:var(--headlineColor);display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:var(--lineClampHeadline);overflow:hidden;max-width:98%;padding:0 6px;transform-origin:center center;will-change:transform;}
-.subline{margin:var(--gapHeadlineSubline) 0 0 0;font-size:var(--sublineFs);line-height:var(--sublineLH);font-style:italic;color:var(--sublineColor);display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:var(--lineClampSubline);overflow:hidden;max-width:98%;padding:0 6px;}
-.cta-wrap{margin-top:var(--gapSublineCTA);position:relative;display:flex;justify-content:center;align-items:center;}.wrap.layout-h .cta-wrap{margin-right:var(--gapCTASlider);}.wrap.layout-v .cta-wrap{margin-bottom:var(--gapCTASlider);}
-.cta{display:inline-flex;align-items:center;justify-content:center;padding:var(--ctaPadY) var(--ctaPadX);border-radius:999px;font-size:var(--ctaFs);font-weight:700;text-decoration:none;background:var(--ctaFillColor);color:var(--ctaTextColor);border:2px solid var(--ctaBorderColor);position:relative;overflow:visible;will-change:transform;transform:translateZ(0);}.cta-inner{white-space:nowrap;line-height:1;color:var(--ctaTextColor);position:relative;z-index:2;}.cta.is-hover{transform:translateY(-1px);transition:transform 180ms ease;}
-@keyframes cta-bounce{0%,80%,100%{transform:translateY(0);}88%{transform:translateY(-7px);}94%{transform:translateY(0);}97%{transform:translateY(-3px);}}.cta-bounce{animation:cta-bounce var(--ctaBounceDur) infinite;}
-.cta-sparks{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:0;height:0;pointer-events:none;z-index:3;display:var(--sparksDisplay);}.spark{position:absolute;width:var(--sparkLen);height:var(--sparkW);background:var(--sparkColor);border-radius:999px;opacity:0;transform-origin:left center;}
-.spark.l1{right:calc(100% + var(--sparkOffsetX) + var(--sparkHardSideOffset));top:calc(-1*var(--sparkGap)+var(--sparkOffsetY));transform:rotate(calc(1*var(--sparkAngle)));}.spark.l2{right:calc(100% + var(--sparkOffsetX) + var(--sparkHardSideOffset));top:calc(0px+var(--sparkOffsetY));transform:rotate(0deg);}.spark.l3{right:calc(100% + var(--sparkOffsetX) + var(--sparkHardSideOffset));top:calc(1*var(--sparkGap)+var(--sparkOffsetY));transform:rotate(calc(-1*var(--sparkAngle)));}
-.spark.r1{left:calc(100% + var(--sparkOffsetX) + var(--sparkHardSideOffset));top:calc(-1*var(--sparkGap)+var(--sparkOffsetY));transform:rotate(calc(-1*var(--sparkAngle)));transform-origin:right center;}.spark.r2{left:calc(100% + var(--sparkOffsetX) + var(--sparkHardSideOffset));top:calc(0px+var(--sparkOffsetY));transform:rotate(0deg);transform-origin:right center;}.spark.r3{left:calc(100% + var(--sparkOffsetX) + var(--sparkHardSideOffset));top:calc(1*var(--sparkGap)+var(--sparkOffsetY));transform:rotate(calc(1*var(--sparkAngle)));transform-origin:right center;}
-.cta-wrap.spark-on .spark{opacity:1;}
-.right{position:relative;overflow:hidden;z-index:1;background:var(--bgColor);display:flex;align-items:stretch;justify-content:stretch;}
-.right.single::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity var(--heroBorderDur) ease;z-index:5;background:linear-gradient(to bottom,rgba(var(--highlightRGB),var(--heroBorderAlpha)) 0%,rgba(var(--highlightRGB),var(--heroBorderAlpha)) calc(var(--heroBorderFalloff)*100%),rgba(var(--highlightRGB),0) 100%) top/100% var(--heroBorderW) no-repeat,linear-gradient(to top,rgba(var(--highlightRGB),var(--heroBorderAlpha)) 0%,rgba(var(--highlightRGB),var(--heroBorderAlpha)) calc(var(--heroBorderFalloff)*100%),rgba(var(--highlightRGB),0) 100%) bottom/100% var(--heroBorderW) no-repeat,linear-gradient(to right,rgba(var(--highlightRGB),var(--heroBorderAlpha)) 0%,rgba(var(--highlightRGB),var(--heroBorderAlpha)) calc(var(--heroBorderFalloff)*100%),rgba(var(--highlightRGB),0) 100%) left/var(--heroBorderW) 100% no-repeat,linear-gradient(to left,rgba(var(--highlightRGB),var(--heroBorderAlpha)) 0%,rgba(var(--highlightRGB),var(--heroBorderAlpha)) calc(var(--heroBorderFalloff)*100%),rgba(var(--highlightRGB),0) 100%) right/var(--heroBorderW) 100% no-repeat;}.right.single:hover::after{opacity:1;}
-.right.dual{flex-direction:row;}.heroCol{position:relative;overflow:hidden;flex:1 1 50%;height:100%;background:var(--bgColor);}.heroCol::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity var(--heroBorderDur) ease;z-index:5;background:linear-gradient(to bottom,rgba(var(--highlightRGB),var(--heroBorderAlpha)) 0%,rgba(var(--highlightRGB),var(--heroBorderAlpha)) calc(var(--heroBorderFalloff)*100%),rgba(var(--highlightRGB),0) 100%) top/100% var(--heroBorderW) no-repeat,linear-gradient(to top,rgba(var(--highlightRGB),var(--heroBorderAlpha)) 0%,rgba(var(--highlightRGB),var(--heroBorderAlpha)) calc(var(--heroBorderFalloff)*100%),rgba(var(--highlightRGB),0) 100%) bottom/100% var(--heroBorderW) no-repeat,linear-gradient(to right,rgba(var(--highlightRGB),var(--heroBorderAlpha)) 0%,rgba(var(--highlightRGB),var(--heroBorderAlpha)) calc(var(--heroBorderFalloff)*100%),rgba(var(--highlightRGB),0) 100%) left/var(--heroBorderW) 100% no-repeat,linear-gradient(to left,rgba(var(--highlightRGB),var(--heroBorderAlpha)) 0%,rgba(var(--highlightRGB),var(--heroBorderAlpha)) calc(var(--heroBorderFalloff)*100%),rgba(var(--highlightRGB),0) 100%) right/var(--heroBorderW) 100% no-repeat;}.heroCol:hover::after{opacity:1;}
-.stack{position:absolute;inset:0;overflow:hidden;}.heroCol .stack{position:absolute;inset:0;}.stack img{position:absolute;top:-1px;left:-1px;width:calc(100% + 2px);height:calc(100% + 2px);object-fit:cover;display:block;will-change:transform;backface-visibility:hidden;transform:translate3d(0,0%,0) scale(var(--sliderImgScale));}.stack img.next{transform:translate3d(0,-100%,0) scale(var(--sliderImgScale));}
-</style></head>
-<body><img src="https://tagm.tchibo.de/ai.aspx?extProvId=300&extProvApi=129768&extPu=tchibo-dv360&extLi=\${INSERTION_ORDER_ID}&extPm=\${CAMPAIGN_ID}&extCr=\${CREATIVE_ID}&adslotid=\${PUBLISHER_ID}&gdpr=\${GDPR}&gdpr_consent=\${GDPR_CONSENT_312}&cb=\${CACHEBUSTER}" width="1" height="1" style="display:none" alt="">
-<div class="ad" id="ad"><div class="wrap layout-${cfg.layout}"><div class="left"><div class="logo"><img src="${logoSrc}" alt="Logo"></div><p class="headline" id="headline">${headline}</p><p class="subline" id="subline">${subline}</p><div class="cta-wrap" id="ctaWrap"><div class="cta-sparks"><span class="spark l1"></span><span class="spark l2"></span><span class="spark l3"></span><span class="spark r1"></span><span class="spark r2"></span><span class="spark r3"></span></div><a class="cta" href="javascript:void(0)" id="cta"><span class="cta-inner">${ctaText}</span></a></div></div>
-<div class="right ${isDual?'dual':'single'}">${isDual?'<div class="heroCol"><div class="stack"><img id="curL" src=""><img id="nextL" class="next" src=""></div></div><div class="heroCol"><div class="stack"><img id="curR" src=""><img id="nextR" class="next" src=""></div></div>':'<div class="stack"><img id="cur" src=""><img id="next" class="next" src=""></div>'}</div></div></div>
-<script>var clickTag="${clickTag}";window.clickTag=clickTag;var IMAGE_DATA=${JSON.stringify(imageData)};var DWELL_MS=${cfg.dwellMs};var SLIDE_MS=${cfg.slideMs};var SLIDER_SCALE=${cfg.sliderImgScale};var IS_DUAL=${isDual};var HEADLINE_PULSE_MAX=${cfg.headlinePulseMaxScale};var HEADLINE_PULSE_MS=${cfg.headlinePulseTotalMs};
-function doExit(){window.open(clickTag,"_blank");}document.getElementById("ad").addEventListener("click",doExit);var cta=document.getElementById("cta"),ctaWrap=document.getElementById("ctaWrap");cta.addEventListener("click",function(e){e.preventDefault();e.stopPropagation();doExit();});ctaWrap.addEventListener("mouseenter",function(){ctaWrap.classList.add("spark-on");cta.classList.add("is-hover");});ctaWrap.addEventListener("mouseleave",function(){ctaWrap.classList.remove("spark-on");cta.classList.remove("is-hover");});setTimeout(function(){cta.classList.add("cta-bounce");},600);
-(function(){var h=document.getElementById("headline");var s=document.createElement("style");s.textContent="@keyframes headline-pulse{0%{transform:scale(1)}45%{transform:scale("+HEADLINE_PULSE_MAX+")}100%{transform:scale(1)}}";document.head.appendChild(s);function r(){h.style.animation="none";void h.offsetWidth;h.style.animation="headline-pulse "+HEADLINE_PULSE_MS+"ms linear 1";}setTimeout(function(){r();setInterval(r,3500);},800);})();
-function applyPos(el,x,y){el.style.objectPosition=x+"% "+y+"%";}function snap(el,yPct){el.style.transition="none";el.style.transform="translate3d(0,"+yPct+"%,0) scale("+SLIDER_SCALE+")";el.offsetHeight;}function anim(el,yPct){el.style.transition="transform "+SLIDE_MS+"ms ease";el.style.transform="translate3d(0,"+yPct+"%,0) scale("+SLIDER_SCALE+")";}function slideDown(cur,next,data,cb){next.src=data.src;applyPos(next,data.posX,data.posY);snap(next,-100);snap(cur,0);requestAnimationFrame(function(){anim(cur,100);anim(next,0);});setTimeout(function(){cur.src=next.src;applyPos(cur,data.posX,data.posY);snap(cur,0);snap(next,-100);if(cb)cb();},SLIDE_MS);}
-(function(){if(!IMAGE_DATA.length)return;if(!IS_DUAL){var cur=document.getElementById("cur"),next=document.getElementById("next"),idx=0;cur.src=IMAGE_DATA[0].src;applyPos(cur,IMAGE_DATA[0].posX,IMAGE_DATA[0].posY);var ni=IMAGE_DATA.length>1?1:0;next.src=IMAGE_DATA[ni].src;applyPos(next,IMAGE_DATA[ni].posX,IMAGE_DATA[ni].posY);snap(next,-100);setInterval(function(){if(IMAGE_DATA.length<2)return;var n=(idx+1)%IMAGE_DATA.length;slideDown(cur,next,IMAGE_DATA[n],function(){idx=n;});},DWELL_MS);}else{var curL=document.getElementById("curL"),nextL=document.getElementById("nextL"),curR=document.getElementById("curR"),nextR=document.getElementById("nextR");var li=0,ri=IMAGE_DATA.length>1?1:0;curL.src=IMAGE_DATA[li].src;applyPos(curL,IMAGE_DATA[li].posX,IMAGE_DATA[li].posY);curR.src=IMAGE_DATA[ri].src;applyPos(curR,IMAGE_DATA[ri].posX,IMAGE_DATA[ri].posY);var nli=(li+2)%IMAGE_DATA.length,nri=(ri+2)%IMAGE_DATA.length;nextL.src=IMAGE_DATA[nli].src;applyPos(nextL,IMAGE_DATA[nli].posX,IMAGE_DATA[nli].posY);nextR.src=IMAGE_DATA[nri].src;applyPos(nextR,IMAGE_DATA[nri].posX,IMAGE_DATA[nri].posY);snap(nextL,-100);snap(nextR,-100);var ng=IMAGE_DATA.length>2?2:0,fl=true,busy=false;setInterval(function(){if(IMAGE_DATA.length<2||busy)return;busy=true;var tc=fl?curL:curR,tn=fl?nextL:nextR,d=IMAGE_DATA[ng];slideDown(tc,tn,d,function(){ng=(ng+1)%IMAGE_DATA.length;fl=!fl;busy=false;});},DWELL_MS);}})();<\/script></body></html>`;
-    }
-
-    async function generatePreviews(){
-      revokePreviewHtmlUrls();previewGrid.innerHTML='';
-      detailNameEl.textContent=sanitizeFilePart(appData.zipName)||'-';
-      detailClickTagEl.textContent=getFinalClickTag()||'-';
-      detailImprTagEl.textContent=IMPR_TAG;
-      await getLogoDataUrl();
-      for(const format of selectedFormats){
-        const cfg=FORMAT_CONFIGS[format],{w,h}=cfg;
-        const html=generateFormatHTML(format,{mode:'preview'});
-        const item=document.createElement('div');item.className='preview-item';item.dataset.format=format;
-        const header=document.createElement('div');header.className='preview-item-header';
-        header.innerHTML='<h4>'+format+' ('+cfg.label+')</h4><button class="btn-crop" data-format="'+format+'"><i class="fas fa-crop-alt"></i> Anpassen</button>';
-        item.appendChild(header);
-        header.querySelector('.btn-crop').addEventListener('click',()=>openCropModal(format));
-        const scrollWrap=document.createElement('div');scrollWrap.className='preview-scroll-wrap';
-        const viewport=document.createElement('div');viewport.className='iframe-viewport';viewport.style.width=w+'px';viewport.style.height=h+'px';
-        const iframe=document.createElement('iframe');iframe.width=w;iframe.height=h;iframe.style.width=w+'px';iframe.style.height=h+'px';
-        iframe.setAttribute('sandbox','allow-scripts allow-same-origin allow-popups');
-        const blob=new Blob([html],{type:'text/html'}),url=URL.createObjectURL(blob);previewHtmlUrls.push(url);iframe.src=url;
-        viewport.appendChild(iframe);scrollWrap.appendChild(viewport);item.appendChild(scrollWrap);previewGrid.appendChild(item);
-      }
-      previewSection.classList.add('visible');
-    }
-    
-    function openCropModal(format){
-      currentCropFormat=format;currentCropImageIndex=null;
-      const cfg=FORMAT_CONFIGS[format];cropFormatTitle.textContent=format+' ('+cfg.label+')';
-      const{w,h}=cfg,maxW=400,maxH=400,scale=Math.min(1,maxW/w,maxH/h);
-      cropPreviewIframe.width=w;cropPreviewIframe.height=h;cropPreviewIframe.style.width=w+'px';cropPreviewIframe.style.height=h+'px';cropPreviewIframe.style.transform='scale('+scale+')';
-      cropPreviewFrame.style.width=Math.ceil(w*scale)+'px';cropPreviewFrame.style.height=Math.ceil(h*scale)+'px';
-      updateCropPreview();renderCropImageThumbs();cropEditorSection.style.display='none';cropModal.classList.add('open');
-    }
-    
-    function closeCropModal(){cropModal.classList.remove('open');currentCropFormat=null;currentCropImageIndex=null;}
-    
-    function updateCropPreview(){
-      if(!currentCropFormat)return;
-      const html=generateFormatHTML(currentCropFormat,{mode:'preview'}),blob=new Blob([html],{type:'text/html'});
-      cropPreviewIframe.src=URL.createObjectURL(blob);
-    }
-    
-    function renderCropImageThumbs(){
-      cropImagesGrid.innerHTML='';
-      uploadedImages.forEach((img,idx)=>{
-        const hasCrop=cropSettings[currentCropFormat]?.[idx];
-        const thumb=document.createElement('div');thumb.className='crop-image-thumb'+(hasCrop?' has-crop':'');
-        thumb.innerHTML='<img src="'+img.url+'"><span class="thumb-num">'+(idx+1)+'</span>';
-        thumb.addEventListener('click',()=>selectCropImage(idx));cropImagesGrid.appendChild(thumb);
-      });
-    }
-    
-    function selectCropImage(idx){
-      currentCropImageIndex=idx;
-      cropImagesGrid.querySelectorAll('.crop-image-thumb').forEach((t,i)=>t.classList.toggle('active',i===idx));
-      cropEditorSection.style.display='block';cropEditorImageName.textContent='Bild '+(idx+1);cropEditorImage.src=uploadedImages[idx].url;
-      const pos=getCropPosition(currentCropFormat,idx);cropImageOffset={x:pos.x,y:pos.y};updateCropFrame();
-    }
-    
-    function updateCropFrame(){
-      if(currentCropFormat===null||currentCropImageIndex===null)return;
-      const cfg=FORMAT_CONFIGS[currentCropFormat],img=cropEditorImage,wrap=cropCanvasWrap;
-      if(!img.complete||img.naturalWidth===0){img.onload=updateCropFrame;return;}
-      let frameRatio;
-      if(cfg.layout==='h'){frameRatio=(cfg.w*(1-cfg.leftRatio))/cfg.h;}else{frameRatio=cfg.w/(cfg.h*(1-cfg.topRatio));}
-      const displayW=wrap.clientWidth,displayH=wrap.clientHeight,imgRatio=img.naturalWidth/img.naturalHeight;
-      let frameW,frameH;
-      if(frameRatio>imgRatio){frameW=displayW;frameH=displayW/frameRatio;}else{frameH=displayH;frameW=displayH*frameRatio;}
-      cropFrame.style.width=frameW+'px';cropFrame.style.height=frameH+'px';cropFrame.style.left=((displayW-frameW)/2)+'px';cropFrame.style.top=((displayH-frameH)/2)+'px';
-      img.style.objectFit='cover';img.style.objectPosition=cropImageOffset.x+'% '+cropImageOffset.y+'%';
-    }
-    
-    cropCanvasWrap.addEventListener('mousedown',e=>{
-      if(currentCropImageIndex===null)return;e.preventDefault();
-      cropDragStart={x:e.clientX,y:e.clientY,offsetX:cropImageOffset.x,offsetY:cropImageOffset.y};
-      document.addEventListener('mousemove',onCropDrag);document.addEventListener('mouseup',onCropDragEnd);
-    });
-    
-    function onCropDrag(e){
-      if(!cropDragStart)return;
-      const dx=e.clientX-cropDragStart.x,dy=e.clientY-cropDragStart.y,sens=0.15;
-      cropImageOffset.x=Math.max(0,Math.min(100,cropDragStart.offsetX-dx*sens));
-      cropImageOffset.y=Math.max(0,Math.min(100,cropDragStart.offsetY-dy*sens));
-      cropEditorImage.style.objectPosition=cropImageOffset.x+'% '+cropImageOffset.y+'%';
-    }
-    
-    function onCropDragEnd(){cropDragStart=null;document.removeEventListener('mousemove',onCropDrag);document.removeEventListener('mouseup',onCropDragEnd);}
-    
-    cropResetBtn.addEventListener('click',()=>{
-      cropImageOffset={x:50,y:50};cropEditorImage.style.objectPosition='50% 50%';
-      if(cropSettings[currentCropFormat])delete cropSettings[currentCropFormat][currentCropImageIndex];
-      renderCropImageThumbs();selectCropImage(currentCropImageIndex);
-    });
-    
-    cropSaveBtn.addEventListener('click',()=>{
-      if(currentCropFormat===null||currentCropImageIndex===null)return;
-      if(!cropSettings[currentCropFormat])cropSettings[currentCropFormat]={};
-      cropSettings[currentCropFormat][currentCropImageIndex]={x:cropImageOffset.x,y:cropImageOffset.y};
-      updateCropPreview();renderCropImageThumbs();
-      if(previewSection.classList.contains('visible'))generatePreviews();
-    });
-    
-    cropModalBackdrop.addEventListener('click',closeCropModal);
-    cropModalClose.addEventListener('click',closeCropModal);
-    
-    async function addBinaryToZip(zip,filename,url){try{zip.file(filename,await fetchBlob(url));}catch(e){}}
-    
-    async function exportBanners(){
-      const baseName=sanitizeFilePart(appData.zipName);
-      if(uploadedImages.length===0){alert('Bitte lade mindestens 1 Bild hoch.');return;}
-      for(const format of selectedFormats){
-        const zip=new JSZip();zip.file('index.html',generateFormatHTML(format,{mode:'export'}));
-        uploadedImages.forEach(img=>zip.file(img.name,img.blob));
-        await addBinaryToZip(zip,'Logo.png',LOGO_ASSET);
-        for(const url of FONT_FILES)await addBinaryToZip(zip,'fonts/'+url.split('/').pop(),url);
-        const blob=await zip.generateAsync({type:'blob',compression:'DEFLATE',compressionOptions:{level:6}});
-        const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=format+'_'+baseName+'.zip';document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(a.href);
-        await new Promise(r=>setTimeout(r,250));
-      }
-    }
-    
-    document.addEventListener('DOMContentLoaded',()=>{
-      pwInput.addEventListener('input',clearPwError);pwSubmit.addEventListener('click',checkPassword);pwInput.addEventListener('keydown',e=>{if(e.key==='Enter')checkPassword();});pwInput.focus();
-      renderFormatGrid();selectAllBtn.addEventListener('click',toggleSelectAll);
-      nextStep1Btn.addEventListener('click',()=>{if(selectedFormats.length>0)showStep(2);});
-      document.getElementById('backStep1').addEventListener('click',()=>{previewSection.classList.remove('visible');showStep(1);});
-      bindCharLimit('headline','headlineHint',TEXT_LIMITS.headline,v=>appData.headline=v);
-      bindCharLimit('subline','sublineHint',TEXT_LIMITS.subline,v=>appData.subline=v);
-      bindCharLimit('ctaText','ctaHint',TEXT_LIMITS.ctaText,v=>appData.ctaText=v);
-      document.getElementById('clickUrl').addEventListener('input',e=>appData.landingUrl=e.target.value);
-      document.getElementById('zipName').addEventListener('input',e=>appData.zipName=e.target.value);
-      document.getElementById('createPreview').addEventListener('click',async()=>{
-        if(!getFinalClickTag()){alert('Bitte gib eine gültige Ziel-URL ein!');return;}
-        if(!(appData.zipName||'').trim()){alert('Bitte gib ein Naming für die ZIP-Datei ein!');return;}
-        if(selectedFormats.length===0){alert('Bitte wähle mindestens ein Format aus.');return;}
-        if(uploadedImages.length===0){alert('Bitte lade mindestens 1 Bild hoch.');return;}
-        await generatePreviews();
-      });
-      document.getElementById('togglePreviewBtn').addEventListener('click',()=>{previewSection.classList.remove('visible');revokePreviewHtmlUrls();});
-      exportModalCloseBtn.addEventListener('click',hideExportModal);exportModalBackdrop.addEventListener('click',hideExportModal);
-      document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(cropModal.classList.contains('open'))closeCropModal();else if(exportModal.classList.contains('open'))hideExportModal();}});
-      const exportBtn=document.getElementById('exportBanners');
-      exportBtn.addEventListener('click',async()=>{
-        if(!getFinalClickTag()){alert('Bitte gib eine gültige Ziel-URL ein!');return;}
-        if(!(appData.zipName||'').trim()){alert('Bitte gib ein Naming für die ZIP-Datei ein!');return;}
-        if(selectedFormats.length===0){alert('Bitte wähle mindestens ein Format aus.');return;}
-        if(uploadedImages.length===0){alert('Bitte lade mindestens 1 Bild hoch.');return;}
-        const oldText=exportBtn.innerHTML;exportBtn.disabled=true;exportBtn.innerHTML='Export läuft... <i class="fas fa-spinner fa-spin"></i>';
-        try{await exportBanners();showExportModal();}finally{exportBtn.disabled=false;exportBtn.innerHTML=oldText;}
-      });
-      window.addEventListener('beforeunload',()=>{revokePreviewHtmlUrls();revokeAllObjectUrls();});
-    });
-  </script>
+  <script src="banner-template.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
