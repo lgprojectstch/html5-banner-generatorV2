@@ -323,6 +323,16 @@ async function getLogoDataUrl() {
   }
 }
 
+// Hilfsfunktion: Blob -> Data URL
+function blobToDataUrl(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
 // Preview
 function revokePreviewUrls() {
   previewHtmlUrls.forEach(u => URL.revokeObjectURL(u));
@@ -344,10 +354,14 @@ async function createPreview() {
   $('detailImprTag').textContent = IMPR_TAG;
   
   const logoSrc = await getLogoDataUrl();
+
+  // FIX: Bilder als Data URLs konvertieren, damit sie im blob:-iframe geladen werden können
+  const images = await Promise.all(
+    uploadedImages.map(async img => ({ src: await blobToDataUrl(img.blob) }))
+  );
   
   for (const format of selectedFormats) {
     const cfg = FORMAT_CONFIGS[format];
-    const images = uploadedImages.map(img => ({ src: img.url }));
     
     const html = generateFormatHTML(format, {
       mode: 'preview',
@@ -445,7 +459,11 @@ async function updateCropPreview() {
   if (!currentCropFormat) return;
   
   const logoSrc = await getLogoDataUrl();
-  const images = uploadedImages.map(img => ({ src: img.url }));
+
+  // FIX: Bilder als Data URLs konvertieren, damit sie im blob:-iframe geladen werden können
+  const images = await Promise.all(
+    uploadedImages.map(async img => ({ src: await blobToDataUrl(img.blob) }))
+  );
   
   const html = generateFormatHTML(currentCropFormat, {
     mode: 'preview',
@@ -649,7 +667,7 @@ async function exportAllBanners() {
   for (const format of selectedFormats) {
     const zip = new JSZip();
     
-    // Generate HTML
+    // Generate HTML — Bilder als relative Pfade (1.jpg, 2.jpg, ...) für den Export
     const images = uploadedImages.map(img => ({ src: img.name }));
     const html = generateFormatHTML(format, {
       mode: 'export',
