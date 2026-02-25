@@ -427,6 +427,13 @@ function openCropModal(format) {
   const cfg = FORMAT_CONFIGS[format];
   $('cropFormatTitle').textContent = `${format} (${cfg.label})`;
   
+  // Pre-set correct aspect ratio on canvas container
+  const aspectPercent = (cfg.h / cfg.w * 100).toFixed(4);
+  $('cropCanvasContainer').style.setProperty('--crop-aspect', `${aspectPercent}%`);
+  if ($('cropFormatBadge')) {
+    $('cropFormatBadge').textContent = `Sichtbarer Bereich: ${cfg.w} × ${cfg.h} px (${cfg.label})`;
+  }
+  
   // Setup preview iframe size
   const maxW = 300, maxH = 350;
   const scale = Math.min(1, maxW / cfg.w, maxH / cfg.h);
@@ -509,6 +516,16 @@ function selectCropImage(idx) {
   $('cropEditorSection').style.display = 'block';
   $('cropEditorImageName').textContent = `Bild ${idx + 1}`;
   
+  // Apply correct aspect ratio for this format
+  if (currentCropFormat) {
+    const cfg = FORMAT_CONFIGS[currentCropFormat];
+    const aspectPercent = (cfg.h / cfg.w * 100).toFixed(4);
+    $('cropCanvasContainer').style.setProperty('--crop-aspect', `${aspectPercent}%`);
+    if ($('cropFormatBadge')) {
+      $('cropFormatBadge').textContent = `Sichtbarer Bereich: ${cfg.w} × ${cfg.h} px (${cfg.label})`;
+    }
+  }
+  
   // Get current position
   const saved = cropSettings[currentCropFormat]?.[idx];
   currentPosX = saved ? saved.x : 50;
@@ -549,12 +566,13 @@ function doCropDrag(e) {
   const dx = e.clientX - dragStartX;
   const dy = e.clientY - dragStartY;
   
-  // Sensitivity - how much the position changes per pixel dragged
-  // Negative because dragging right should move the image left (show more of right side)
-  const sensitivity = 0.3;
+  // Use container size for accurate pixel-based dragging
+  const container = $('cropCanvasContainer');
+  const cw = container.offsetWidth || 400;
+  const ch = container.offsetHeight || 300;
   
-  currentPosX = Math.max(0, Math.min(100, dragStartPosX - dx * sensitivity));
-  currentPosY = Math.max(0, Math.min(100, dragStartPosY - dy * sensitivity));
+  currentPosX = Math.max(0, Math.min(100, dragStartPosX - (dx / cw) * 100));
+  currentPosY = Math.max(0, Math.min(100, dragStartPosY - (dy / ch) * 100));
   
   updatePositionIndicator();
 }
@@ -588,10 +606,12 @@ function doCropDragTouch(e) {
   const dx = e.touches[0].clientX - dragStartX;
   const dy = e.touches[0].clientY - dragStartY;
   
-  const sensitivity = 0.3;
+  const container = $('cropCanvasContainer');
+  const cw = container.offsetWidth || 400;
+  const ch = container.offsetHeight || 300;
   
-  currentPosX = Math.max(0, Math.min(100, dragStartPosX - dx * sensitivity));
-  currentPosY = Math.max(0, Math.min(100, dragStartPosY - dy * sensitivity));
+  currentPosX = Math.max(0, Math.min(100, dragStartPosX - (dx / cw) * 100));
+  currentPosY = Math.max(0, Math.min(100, dragStartPosY - (dy / ch) * 100));
   
   updatePositionIndicator();
 }
