@@ -420,6 +420,25 @@ async function createPreview() {
 // CROP MODAL - Fixed drag functionality
 // ==========================================
 
+// Helper: compute the actual image region dimensions for a format
+// This matches the .right div in the banner template
+function getImageRegion(cfg) {
+  let imgW, imgH;
+  if (cfg.layout === 'h') {
+    imgW = cfg.w * (1 - cfg.leftRatio);
+    imgH = cfg.h;
+  } else {
+    // layout === 'v'
+    imgW = cfg.w;
+    imgH = cfg.h * (1 - cfg.topRatio);
+  }
+  // dual formats split the right side in two columns — each heroCol is half width
+  if (cfg.dual) {
+    imgW = imgW / 2;
+  }
+  return { imgW, imgH };
+}
+
 function openCropModal(format) {
   currentCropFormat = format;
   currentCropImageIndex = null;
@@ -427,11 +446,13 @@ function openCropModal(format) {
   const cfg = FORMAT_CONFIGS[format];
   $('cropFormatTitle').textContent = `${format} (${cfg.label})`;
   
-  // Pre-set correct aspect ratio on canvas container
-  const aspectPercent = (cfg.h / cfg.w * 100).toFixed(4);
-  $('cropCanvasContainer').style.setProperty('--crop-aspect', `${aspectPercent}%`);
+  // Set correct image region aspect ratio on canvas container
+  const { imgW, imgH } = getImageRegion(cfg);
+  $('cropCanvasContainer').style.setProperty('--crop-aspect-w', Math.round(imgW));
+  $('cropCanvasContainer').style.setProperty('--crop-aspect-h', Math.round(imgH));
   if ($('cropFormatBadge')) {
-    $('cropFormatBadge').textContent = `Sichtbarer Bereich: ${cfg.w} × ${cfg.h} px (${cfg.label})`;
+    const dualHint = cfg.dual ? ' (je Spalte)' : '';
+    $('cropFormatBadge').textContent = `Bildbereich: ${Math.round(imgW)} × ${Math.round(imgH)} px${dualHint}`;
   }
   
   // Setup preview iframe size
@@ -516,13 +537,15 @@ function selectCropImage(idx) {
   $('cropEditorSection').style.display = 'block';
   $('cropEditorImageName').textContent = `Bild ${idx + 1}`;
   
-  // Apply correct aspect ratio for this format
+  // Apply the correct image region aspect ratio for this format
   if (currentCropFormat) {
     const cfg = FORMAT_CONFIGS[currentCropFormat];
-    const aspectPercent = (cfg.h / cfg.w * 100).toFixed(4);
-    $('cropCanvasContainer').style.setProperty('--crop-aspect', `${aspectPercent}%`);
+    const { imgW, imgH } = getImageRegion(cfg);
+    $('cropCanvasContainer').style.setProperty('--crop-aspect-w', Math.round(imgW));
+    $('cropCanvasContainer').style.setProperty('--crop-aspect-h', Math.round(imgH));
     if ($('cropFormatBadge')) {
-      $('cropFormatBadge').textContent = `Sichtbarer Bereich: ${cfg.w} × ${cfg.h} px (${cfg.label})`;
+      const dualHint = cfg.dual ? ' (je Spalte)' : '';
+      $('cropFormatBadge').textContent = `Bildbereich: ${Math.round(imgW)} × ${Math.round(imgH)} px${dualHint}`;
     }
   }
   
