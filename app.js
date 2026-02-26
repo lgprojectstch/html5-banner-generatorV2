@@ -476,55 +476,50 @@ function editorScale() {
 // ── Coordinate conversions ─────────────────────────────────────────────────
 
 // Editor pixel offset  →  object-position %
-// The cover portion of the editor image starts at (offX + CONTEXT_PAD_PX, offY + CONTEXT_PAD_PX).
-// Its shift relative to the frame, converted to real banner px, gives the CSS shift,
-// which maps to a percentage of the real overflow.
+// imgOffsetX/Y is the translate() position of the image's top-left corner in the stage.
+// At 0%: image left edge aligns with frame left edge  → offX = frameX
+// At 100%: image is shifted left by (coverW - frameW) → offX = frameX - overW*es
+// General: shiftX = frameX - offX  (how far the image left edge is to the right of frame left)
 function offsetToObjectPos(offX, offY) {
   const { overW, overH } = realOverflow();
   const es = editorScale();
 
-  const shiftEditorX = frameX - (offX + CONTEXT_PAD_PX);
-  const shiftEditorY = frameY - (offY + CONTEXT_PAD_PX);
-
-  // Convert editor shift back to real banner pixels
-  const shiftRealX = shiftEditorX / es;
-  const shiftRealY = shiftEditorY / es;
-
-  const pctX = overW > 0.5 ? Math.max(0, Math.min(100, (shiftRealX / overW) * 100)) : 50;
-  const pctY = overH > 0.5 ? Math.max(0, Math.min(100, (shiftRealY / overH) * 100)) : 50;
+  const pctX = overW > 0.5 ? Math.max(0, Math.min(100, ((frameX - offX) / (overW * es)) * 100)) : 50;
+  const pctY = overH > 0.5 ? Math.max(0, Math.min(100, ((frameY - offY) / (overH * es)) * 100)) : 50;
   return { pctX, pctY };
 }
 
 // object-position %  →  editor pixel offset
+// offX = frameX - (pctX/100) * overW * es
+// At 50%: offX = frameX - 0.5 * overW * es  (image centred over frame, matching CSS 50% 50%)
 function objectPosToOffset(pctX, pctY) {
   const { overW, overH } = realOverflow();
   const es = editorScale();
 
-  const shiftRealX = (pctX / 100) * overW;
-  const shiftRealY = (pctY / 100) * overH;
-
   return {
-    offX: (frameX - shiftRealX * es) - CONTEXT_PAD_PX,
-    offY: (frameY - shiftRealY * es) - CONTEXT_PAD_PX
+    offX: frameX - (pctX / 100) * overW * es,
+    offY: frameY - (pctY / 100) * overH * es,
   };
 }
 
-// Clamp so the cover portion always fully covers the frame
+// Clamp so the cover portion always fully covers the frame.
+// offX is the image top-left in stage coords.
+// Cover must not expose gap at any edge of the frame:
+//   left:  offX <= frameX           (image left edge at or left of frame left)
+//   right: offX >= frameX - (coverW - frameW)  (image right edge at or right of frame right)
 function clampOffset(offX, offY) {
   const cs = realCoverScale();
   const es = editorScale();
   const coverEditorW = Math.round(realNatW * cs * es);
   const coverEditorH = Math.round(realNatH * cs * es);
 
-  const coverLeft = offX + CONTEXT_PAD_PX;
-  const coverTop  = offY + CONTEXT_PAD_PX;
+  const minX = frameX - (coverEditorW - frameW);
+  const minY = frameY - (coverEditorH - frameH);
 
-  const minCL = frameX - (coverEditorW - frameW);
-  const minCT = frameY - (coverEditorH - frameH);
-
-  const cl = Math.min(frameX, Math.max(minCL, coverLeft));
-  const ct = Math.min(frameY, Math.max(minCT, coverTop));
-  return { offX: cl - CONTEXT_PAD_PX, offY: ct - CONTEXT_PAD_PX };
+  return {
+    offX: Math.min(frameX, Math.max(minX, offX)),
+    offY: Math.min(frameY, Math.max(minY, offY)),
+  };
 }
 
 // ── Layout ─────────────────────────────────────────────────────────────────
@@ -569,13 +564,11 @@ function layoutImage(naturalW, naturalH) {
   const cs = realCoverScale();  // real banner cover scale
   const es = editorScale();     // editor px per banner px
 
-  // Cover size in editor pixels (this is what exactly fills the frame)
-  const coverEditorW = Math.round(naturalW * cs * es);
-  const coverEditorH = Math.round(naturalH * cs * es);
-
-  // Add context padding so user sees surrounding image
-  imgRenderW = coverEditorW + CONTEXT_PAD_PX * 2;
-  imgRenderH = coverEditorH + CONTEXT_PAD_PX * 2;
+  // Image is rendered exactly at cover size — 1:1 correspondence with banner pixels.
+  // CONTEXT_PAD_PX is purely positional: the image is translated so that up to
+  // CONTEXT_PAD_PX pixels of it are visible outside the frame, giving drag context.
+  imgRenderW = Math.round(naturalW * cs * es);
+  imgRenderH = Math.round(naturalH * cs * es);
 
   const img = $('cropEditorImage');
   img.style.width  = imgRenderW + 'px';
