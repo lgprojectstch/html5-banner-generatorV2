@@ -51,15 +51,15 @@
     .preview-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;}
     .preview-head .title{display:flex;align-items:center;gap:10px;font-weight:900;font-size:1.15rem;}
     .toggle-preview{border:1px solid rgba(102,126,234,.25);background:#f3f6ff;color:#3c4cb4;padding:8px 14px;border-radius:999px;font-weight:800;cursor:pointer;}
-    .preview-grid{display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start;justify-content:flex-start;}
+    .preview-grid{display:flex;flex-wrap:wrap;gap:20px;align-items:flex-end;justify-content:flex-start;}
     .preview-item{background:#f7f9ff;border:1px solid rgba(0,0,0,0.06);border-radius:14px;padding:12px;overflow:hidden;box-shadow:0 10px 24px rgba(0,0,0,0.06);flex-shrink:0;}
     .preview-item-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
     .preview-item h4{margin:0;font-weight:900;color:#1f2430;font-size:.95rem;}
     .btn-crop{background:rgba(102,126,234,0.1);border:1px solid rgba(102,126,234,0.3);color:var(--primary);padding:5px 10px;border-radius:8px;cursor:pointer;font-size:.75rem;font-weight:600;display:flex;align-items:center;gap:5px;transition:all .2s ease;}
     .btn-crop:hover{background:var(--primary);color:#fff;}
-    .preview-scroll-wrap{overflow:auto;max-height:500px;}
-    .iframe-viewport{border-radius:8px;overflow:hidden;background:#fff;border:1px solid rgba(0,0,0,0.08);}
-    .iframe-viewport iframe{border:0;display:block;background:transparent;}
+    .preview-scroll-wrap{overflow:visible;}
+    .iframe-viewport{border-radius:8px;overflow:hidden;background:#fff;border:1px solid rgba(0,0,0,0.08);position:relative;}
+    .iframe-viewport iframe{border:0;display:block;background:transparent;transform-origin:top left;}
     details.preview-details{margin-top:14px;background:#fff;border:1px solid rgba(0,0,0,0.08);border-radius:14px;overflow:hidden;}
     details.preview-details summary{padding:14px 18px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:10px;user-select:none;}
     details.preview-details summary i{margin-left:auto;transition:transform .2s ease;}
