@@ -92,7 +92,7 @@ function init() {
   $('cropSaveBtn').addEventListener('click', saveCrop);
 
   // Crop drag - IMPORTANT: bind to the container
-  const cropContainer = $('cropCanvasContainer');
+  const cropContainer = $('cropStage');
   cropContainer.addEventListener('mousedown', startCropDrag);
   document.addEventListener('mousemove', doCropDrag);
   document.addEventListener('mouseup', endCropDrag);
@@ -417,61 +417,201 @@ async function createPreview() {
 }
 
 // ==========================================
-// CROP MODAL - Fixed drag functionality
+// CROP MODAL - Framing Tool
 // ==========================================
 
 // Helper: compute the actual image region dimensions for a format
-// This matches the .right div in the banner template
 function getImageRegion(cfg) {
   let imgW, imgH;
   if (cfg.layout === 'h') {
     imgW = cfg.w * (1 - cfg.leftRatio);
     imgH = cfg.h;
   } else {
-    // layout === 'v'
     imgW = cfg.w;
     imgH = cfg.h * (1 - cfg.topRatio);
   }
-  // dual formats split the right side in two columns — each heroCol is half width
-  if (cfg.dual) {
-    imgW = imgW / 2;
-  }
+  if (cfg.dual) imgW = imgW / 2;
   return { imgW, imgH };
+}
+
+// ── Internal framing state (pixel-based) ──────────────────────────────────
+// imgOffsetX/Y: top-left position of the image relative to the stage
+let imgOffsetX = 0;
+let imgOffsetY = 0;
+let imgRenderW = 0; // rendered image width in px
+let imgRenderH = 0; // rendered image height in px
+let frameX = 0, frameY = 0, frameW = 0, frameH = 0; // frame rect within stage
+let dragImgStartX = 0, dragImgStartY = 0;
+
+const STAGE_H = 320; // fixed stage height in px
+
+// Convert current pixel offset → object-position % (matches CSS object-fit:cover behavior)
+function offsetToObjectPos(offX, offY) {
+  // Available "travel" range for the image beyond the frame
+  const travelX = imgRenderW - frameW;
+  const travelY = imgRenderH - frameH;
+  // offX is relative to stage; frame starts at frameX
+  // How far into the travel range are we? (offset of img relative to frame top-left)
+  const relX = frameX - offX; // how much image is shifted left relative to frame
+  const relY = frameY - offY;
+  const pctX = travelX > 0 ? Math.max(0, Math.min(100, (relX / travelX) * 100)) : 50;
+  const pctY = travelY > 0 ? Math.max(0, Math.min(100, (relY / travelY) * 100)) : 50;
+  return { pctX, pctY };
+}
+
+// Convert saved object-position % → pixel offset
+function objectPosToOffset(pctX, pctY) {
+  const travelX = imgRenderW - frameW;
+  const travelY = imgRenderH - frameH;
+  const relX = (pctX / 100) * travelX;
+  const relY = (pctY / 100) * travelY;
+  return {
+    offX: frameX - relX,
+    offY: frameY - relY
+  };
+}
+
+// Clamp offset so image always fully covers the frame
+function clampOffset(offX, offY) {
+  const maxX = frameX; // img left edge ≤ frame left edge
+  const minX = frameX - (imgRenderW - frameW); // img right edge ≥ frame right edge
+  const maxY = frameY;
+  const minY = frameY - (imgRenderH - frameH);
+  return {
+    offX: Math.min(maxX, Math.max(minX, offX)),
+    offY: Math.min(maxY, Math.max(minY, offY))
+  };
+}
+
+// Lay out the frame & image inside the stage based on format
+function layoutStage(cfg) {
+  const stage = $('cropStage');
+  const stageW = stage.offsetWidth;
+  const { imgW: regionW, imgH: regionH } = getImageRegion(cfg);
+
+  // Scale the frame to fit inside the stage with some padding
+  const PAD = 48; // space for the label above the frame
+  const maxFW = stageW - PAD * 2;
+  const maxFH = STAGE_H - PAD * 2;
+  const scale = Math.min(maxFW / regionW, maxFH / regionH);
+  frameW = Math.round(regionW * scale);
+  frameH = Math.round(regionH * scale);
+
+  // Center the frame in the stage
+  frameX = Math.round((stageW - frameW) / 2);
+  frameY = Math.round((STAGE_H - frameH) / 2) + (PAD / 4);
+
+  // Position the frame element
+  const frame = $('cropFrame');
+  frame.style.left   = frameX + 'px';
+  frame.style.top    = frameY + 'px';
+  frame.style.width  = frameW + 'px';
+  frame.style.height = frameH + 'px';
+
+  $('cropFrameLabel').textContent = `${Math.round(regionW)} × ${Math.round(regionH)} px`;
+
+  // Update overlay panels
+  $('cropOvTop').style.cssText    = `left:0;top:0;width:100%;height:${frameY}px;`;
+  $('cropOvBottom').style.cssText = `left:0;top:${frameY+frameH}px;width:100%;bottom:0;height:${STAGE_H - frameY - frameH}px;`;
+  $('cropOvLeft').style.cssText   = `left:0;top:${frameY}px;width:${frameX}px;height:${frameH}px;`;
+  $('cropOvRight').style.cssText  = `left:${frameX+frameW}px;top:${frameY}px;right:0;width:${stageW-frameX-frameW}px;height:${frameH}px;`;
+}
+
+// Lay out the image at its natural aspect ratio, scaled to cover the frame + some breathing room
+function layoutImage(naturalW, naturalH) {
+  const imgAspect = naturalW / naturalH;
+  const frameAspect = frameW / frameH;
+
+  // Scale image so it fully covers the frame, then add a 40% zoom-out margin for context
+  const CONTEXT_FACTOR = 1.4;
+  let w, h;
+  if (imgAspect > frameAspect) {
+    // image is wider → match height
+    h = frameH * CONTEXT_FACTOR;
+    w = h * imgAspect;
+  } else {
+    w = frameW * CONTEXT_FACTOR;
+    h = w / imgAspect;
+  }
+  imgRenderW = Math.round(w);
+  imgRenderH = Math.round(h);
+
+  const img = $('cropEditorImage');
+  img.style.width  = imgRenderW + 'px';
+  img.style.height = imgRenderH + 'px';
+}
+
+// Apply the current imgOffsetX/Y to the image element and update overlays + indicator
+function applyImagePosition() {
+  const clamped = clampOffset(imgOffsetX, imgOffsetY);
+  imgOffsetX = clamped.offX;
+  imgOffsetY = clamped.offY;
+
+  $('cropEditorImage').style.transform = `translate(${imgOffsetX}px, ${imgOffsetY}px)`;
+
+  const { pctX, pctY } = offsetToObjectPos(imgOffsetX, imgOffsetY);
+  currentPosX = pctX;
+  currentPosY = pctY;
+  $('cropPosIndicator').textContent = `${Math.round(pctX)}% / ${Math.round(pctY)}%`;
+}
+
+// Initialize stage for a freshly selected image + format
+async function initStageForImage(idx) {
+  const cfg = FORMAT_CONFIGS[currentCropFormat];
+  const stage = $('cropStage');
+
+  layoutStage(cfg);
+
+  // Load image to get natural dimensions
+  const url = uploadedImages[idx].url;
+  await new Promise(resolve => {
+    const tmp = new Image();
+    tmp.onload = () => {
+      layoutImage(tmp.naturalWidth, tmp.naturalHeight);
+      resolve();
+    };
+    tmp.src = url;
+  });
+
+  $('cropEditorImage').src = url;
+
+  // Restore saved position or default to center
+  const saved = cropSettings[currentCropFormat]?.[idx];
+  const px = saved ? saved.x : 50;
+  const py = saved ? saved.y : 50;
+  const { offX, offY } = objectPosToOffset(px, py);
+  imgOffsetX = offX;
+  imgOffsetY = offY;
+
+  applyImagePosition();
 }
 
 function openCropModal(format) {
   currentCropFormat = format;
   currentCropImageIndex = null;
-  
+
   const cfg = FORMAT_CONFIGS[format];
   $('cropFormatTitle').textContent = `${format} (${cfg.label})`;
-  
-  // Set correct image region aspect ratio on canvas container
+
   const { imgW, imgH } = getImageRegion(cfg);
-  $('cropCanvasContainer').style.setProperty('--crop-aspect-w', Math.round(imgW));
-  $('cropCanvasContainer').style.setProperty('--crop-aspect-h', Math.round(imgH));
+  const dualHint = cfg.dual ? ' · je Spalte' : '';
   if ($('cropFormatBadge')) {
-    const dualHint = cfg.dual ? ' (je Spalte)' : '';
-    $('cropFormatBadge').textContent = `Bildbereich: ${Math.round(imgW)} × ${Math.round(imgH)} px${dualHint}`;
+    $('cropFormatBadge').textContent = `Bildbereich ${Math.round(imgW)}×${Math.round(imgH)}px${dualHint}`;
   }
-  
-  // Setup preview iframe size
+
+  // Setup preview iframe
   const maxW = 300, maxH = 350;
   const scale = Math.min(1, maxW / cfg.w, maxH / cfg.h);
-  
   const iframe = $('cropPreviewIframe');
-  iframe.width = cfg.w;
-  iframe.height = cfg.h;
-  iframe.style.width = cfg.w + 'px';
-  iframe.style.height = cfg.h + 'px';
+  iframe.width = cfg.w; iframe.height = cfg.h;
+  iframe.style.width = cfg.w + 'px'; iframe.style.height = cfg.h + 'px';
   iframe.style.transform = `scale(${scale})`;
-  
-  $('cropPreviewFrame').style.width = Math.ceil(cfg.w * scale) + 'px';
+  $('cropPreviewFrame').style.width  = Math.ceil(cfg.w * scale) + 'px';
   $('cropPreviewFrame').style.height = Math.ceil(cfg.h * scale) + 'px';
-  
+
   updateCropPreview();
   renderCropThumbnails();
-  
+
   $('cropEditorSection').style.display = 'none';
   $('cropModal').classList.add('open');
 }
@@ -527,128 +667,77 @@ function renderCropThumbnails() {
 
 function selectCropImage(idx) {
   currentCropImageIndex = idx;
-  
-  // Update active state on thumbnails
+
   $('cropImagesGrid').querySelectorAll('.crop-image-thumb').forEach((t, i) => {
     t.classList.toggle('active', i === idx);
   });
-  
-  // Show editor
+
   $('cropEditorSection').style.display = 'block';
   $('cropEditorImageName').textContent = `Bild ${idx + 1}`;
-  
-  // Apply the correct image region aspect ratio for this format
-  if (currentCropFormat) {
-    const cfg = FORMAT_CONFIGS[currentCropFormat];
-    const { imgW, imgH } = getImageRegion(cfg);
-    $('cropCanvasContainer').style.setProperty('--crop-aspect-w', Math.round(imgW));
-    $('cropCanvasContainer').style.setProperty('--crop-aspect-h', Math.round(imgH));
-    if ($('cropFormatBadge')) {
-      const dualHint = cfg.dual ? ' (je Spalte)' : '';
-      $('cropFormatBadge').textContent = `Bildbereich: ${Math.round(imgW)} × ${Math.round(imgH)} px${dualHint}`;
-    }
-  }
-  
-  // Get current position
-  const saved = cropSettings[currentCropFormat]?.[idx];
-  currentPosX = saved ? saved.x : 50;
-  currentPosY = saved ? saved.y : 50;
-  
-  // Set image
-  const img = $('cropEditorImage');
-  img.src = uploadedImages[idx].url;
-  img.style.objectPosition = `${currentPosX}% ${currentPosY}%`;
-  
-  updatePositionIndicator();
+
+  // Initialize framing stage (async: needs image naturalWidth/Height)
+  initStageForImage(idx);
 }
 
 function updatePositionIndicator() {
-  $('cropPosIndicator').textContent = `${Math.round(currentPosX)}% / ${Math.round(currentPosY)}%`;
-  $('cropEditorImage').style.objectPosition = `${currentPosX}% ${currentPosY}%`;
+  // kept for compatibility — actual update now in applyImagePosition()
 }
 
 // DRAG HANDLERS - Mouse
 function startCropDrag(e) {
   if (currentCropImageIndex === null) return;
-  
   e.preventDefault();
   isDragging = true;
   dragStartX = e.clientX;
   dragStartY = e.clientY;
-  dragStartPosX = currentPosX;
-  dragStartPosY = currentPosY;
-  
-  $('cropCanvasContainer').style.cursor = 'grabbing';
+  dragImgStartX = imgOffsetX;
+  dragImgStartY = imgOffsetY;
+  $('cropStage').style.cursor = 'grabbing';
 }
 
 function doCropDrag(e) {
   if (!isDragging) return;
-  
   e.preventDefault();
-  
-  const dx = e.clientX - dragStartX;
-  const dy = e.clientY - dragStartY;
-  
-  // Use container size for accurate pixel-based dragging
-  const container = $('cropCanvasContainer');
-  const cw = container.offsetWidth || 400;
-  const ch = container.offsetHeight || 300;
-  
-  currentPosX = Math.max(0, Math.min(100, dragStartPosX - (dx / cw) * 100));
-  currentPosY = Math.max(0, Math.min(100, dragStartPosY - (dy / ch) * 100));
-  
-  updatePositionIndicator();
+  imgOffsetX = dragImgStartX + (e.clientX - dragStartX);
+  imgOffsetY = dragImgStartY + (e.clientY - dragStartY);
+  applyImagePosition();
 }
 
 function endCropDrag() {
   if (!isDragging) return;
-  
   isDragging = false;
-  $('cropCanvasContainer').style.cursor = 'grab';
+  $('cropStage').style.cursor = 'grab';
 }
 
 // DRAG HANDLERS - Touch
 function startCropDragTouch(e) {
   if (currentCropImageIndex === null) return;
   if (e.touches.length !== 1) return;
-  
   e.preventDefault();
   isDragging = true;
   dragStartX = e.touches[0].clientX;
   dragStartY = e.touches[0].clientY;
-  dragStartPosX = currentPosX;
-  dragStartPosY = currentPosY;
+  dragImgStartX = imgOffsetX;
+  dragImgStartY = imgOffsetY;
 }
 
 function doCropDragTouch(e) {
   if (!isDragging) return;
   if (e.touches.length !== 1) return;
-  
   e.preventDefault();
-  
-  const dx = e.touches[0].clientX - dragStartX;
-  const dy = e.touches[0].clientY - dragStartY;
-  
-  const container = $('cropCanvasContainer');
-  const cw = container.offsetWidth || 400;
-  const ch = container.offsetHeight || 300;
-  
-  currentPosX = Math.max(0, Math.min(100, dragStartPosX - (dx / cw) * 100));
-  currentPosY = Math.max(0, Math.min(100, dragStartPosY - (dy / ch) * 100));
-  
-  updatePositionIndicator();
+  imgOffsetX = dragImgStartX + (e.touches[0].clientX - dragStartX);
+  imgOffsetY = dragImgStartY + (e.touches[0].clientY - dragStartY);
+  applyImagePosition();
 }
 
 function resetCrop() {
-  currentPosX = 50;
-  currentPosY = 50;
-  updatePositionIndicator();
-  
-  // Remove from saved settings
   if (cropSettings[currentCropFormat]) {
     delete cropSettings[currentCropFormat][currentCropImageIndex];
   }
-  
+  // Re-init stage at 50/50
+  if (currentCropImageIndex !== null) {
+    initStageForImage(currentCropImageIndex);
+  }
   renderCropThumbnails();
   if (currentCropImageIndex !== null) {
     $('cropImagesGrid').querySelectorAll('.crop-image-thumb')[currentCropImageIndex]?.classList.add('active');
