@@ -20,7 +20,8 @@ const FORMAT_ORDER = ["300x250", "300x600", "160x600", "336x280", "320x100", "32
 
 function generateFormatHTML(formatKey, data) {
   const cfg = FORMAT_CONFIGS[formatKey];
-  const { mode = 'export', images = [], headline = '', subline = '', ctaText = '', clickTag = '', logoSrc = 'Logo.png', cropSettings = {} } = data;
+  const { mode = 'export', images = [], headline = '', subline = '', ctaText = '', clickTag = '', logoSrc = 'Logo.png', cropSettings = {}, colors = {} } = data;
+  const col = { bg: '#63aeab', text: '#ffffff', ctaBg: '#ffffff', ctaText: '#63aeab', ...colors };
   const isDual = cfg.dual === true;
 
   const imageData = images.map((img, idx) => {
@@ -32,7 +33,7 @@ return `<!doctype html><html lang="de"><head><meta charset="utf-8"/><meta name="
 <link rel="preload" href="fonts/InterstateWGL-Regular.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="fonts/InterstateWGL-Bold.woff2" as="font" type="font/woff2" crossorigin>
 <style>@font-face{font-family:"InterstateWGL";src:url("fonts/InterstateWGL-Regular.woff2") format("woff2");font-weight:400;font-style:normal;font-display:block;}@font-face{font-family:"InterstateWGL";src:url("fonts/InterstateWGL-Bold.woff2") format("woff2");font-weight:700;font-style:normal;font-display:block;}
 *{box-sizing:border-box;}html,body{margin:0;padding:0;}
-:root{--w:${cfg.w}px;--h:${cfg.h}px;--bgColor:#8AA3A1;--headlineColor:#FFF;--sublineColor:#FFF;--ctaFillColor:#FFF;--ctaBorderColor:#FFF;--ctaTextColor:#8AA3A1;--highlightRGB:255,255,255;--frameW:1px;--padX:${cfg.padX}px;--leftRatio:${cfg.leftRatio};--topRatio:${cfg.topRatio};--logoH:${cfg.logoH}px;--gapLogoHeadline:${cfg.gapLogoHeadline}px;--gapHeadlineSubline:${cfg.gapHeadlineSubline}px;--gapSublineCTA:${cfg.gapSublineCTA}px;--gapCTASlider:${cfg.gapCTASlider}px;--headlineFs:${cfg.headlineFs}px;--sublineFs:${cfg.sublineFs}px;--ctaFs:${cfg.ctaFs}px;--ctaPadY:${cfg.ctaPadY}px;--ctaPadX:${cfg.ctaPadX}px;--headlineLH:1.08;--sublineLH:1.12;--lineClampHeadline:${cfg.headlineLines};--lineClampSubline:1;--heroBorderW:5px;--heroBorderAlpha:0.95;--heroBorderFalloff:0.30;--heroBorderDur:180ms;--ctaBounceDur:2000ms;--sliderImgScale:${cfg.sliderImgScale};}
+:root{--w:${cfg.w}px;--h:${cfg.h}px;--bgColor:${col.bg};--headlineColor:${col.text};--sublineColor:${col.text};--ctaFillColor:${col.ctaBg};--ctaBorderColor:${col.ctaBg};--ctaTextColor:${col.ctaText};--highlightRGB:255,255,255;--frameW:1px;--padX:${cfg.padX}px;--leftRatio:${cfg.leftRatio};--topRatio:${cfg.topRatio};--logoH:${cfg.logoH}px;--gapLogoHeadline:${cfg.gapLogoHeadline}px;--gapHeadlineSubline:${cfg.gapHeadlineSubline}px;--gapSublineCTA:${cfg.gapSublineCTA}px;--gapCTASlider:${cfg.gapCTASlider}px;--headlineFs:${cfg.headlineFs}px;--sublineFs:${cfg.sublineFs}px;--ctaFs:${cfg.ctaFs}px;--ctaPadY:${cfg.ctaPadY}px;--ctaPadX:${cfg.ctaPadX}px;--headlineLH:1.08;--sublineLH:1.12;--lineClampHeadline:${cfg.headlineLines};--lineClampSubline:1;--heroBorderW:5px;--heroBorderAlpha:0.95;--heroBorderFalloff:0.30;--heroBorderDur:180ms;--ctaBounceDur:2000ms;--sliderImgScale:${cfg.sliderImgScale};}
 .ad{width:var(--w);height:var(--h);overflow:hidden;background:var(--bgColor);border:var(--frameW) solid var(--bgColor);cursor:pointer;user-select:none;font-family:"InterstateWGL",Arial,sans-serif;position:relative;}
 .wrap{position:absolute;inset:0;display:flex;width:100%;height:100%;}.wrap.layout-h{flex-direction:row;}.wrap.layout-v{flex-direction:column;}
 .left{position:relative;overflow:hidden;background:var(--bgColor);z-index:2;display:flex;flex-direction:column;align-items:center;text-align:center;justify-content:center;padding:0 var(--padX);}
