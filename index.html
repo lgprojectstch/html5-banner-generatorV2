@@ -85,6 +85,21 @@
     .input-group input:focus,.input-group select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(102,126,234,0.12);}
     .template-row{margin-top:10px;padding:12px;border:1px solid rgba(0,0,0,0.08);border-radius:12px;background:#fbfcff;}
     .template-meta{margin-top:8px;font-size:.85rem;color:#6b7280;line-height:1.35;}
+    .tmpl-tabs{display:flex;gap:6px;margin-top:6px;}
+    .tmpl-tab{flex:1;padding:7px 0;border-radius:8px;border:2px solid #e0e0e0;background:#f8f9fa;color:#555;font-weight:700;font-size:.85rem;cursor:pointer;transition:all .18s ease;}
+    .tmpl-tab:hover{border-color:#aaa;background:#f0f2f5;}
+    .tmpl-tab.active[data-tmpl="standard"]{background:#63aeab;border-color:#63aeab;color:#fff;}
+    .tmpl-tab.active[data-tmpl="sale"]{background:#be2d2f;border-color:#be2d2f;color:#fff;}
+    .tmpl-tab.active[data-tmpl="custom"]{background:var(--primary);border-color:var(--primary);color:#fff;}
+    .template-colors-preview{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;align-items:center;}
+    .color-swatch{display:flex;align-items:center;gap:5px;font-size:.75rem;color:#555;}
+    .color-swatch-dot{width:18px;height:18px;border-radius:4px;border:1px solid rgba(0,0,0,0.12);flex-shrink:0;}
+    .custom-colors{margin-top:10px;}
+    .color-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+    .color-field label{display:block;font-size:.75rem;font-weight:700;color:#6b7280;margin-bottom:4px;}
+    .color-input-wrap{display:flex;align-items:center;gap:6px;}
+    .color-input-wrap input[type="color"]{width:36px;height:30px;border:2px solid #e0e0e0;border-radius:6px;padding:2px;cursor:pointer;background:#fff;}
+    .color-input-wrap span{font-size:.78rem;font-family:'SF Mono','Fira Code',monospace;color:#444;}
     .char-hint{margin-top:6px;font-size:.72rem;color:#6b7280;display:flex;justify-content:flex-end;gap:10px;user-select:none;}
     .char-hint.over{color:var(--danger);font-weight:800;}
     .input-over{border-color:var(--danger)!important;box-shadow:0 0 0 3px rgba(255,107,107,0.18)!important;}
@@ -237,10 +252,34 @@
             <h3><i class="fas fa-font"></i> Texte anpassen</h3>
             <div class="template-row">
               <div class="input-group" style="margin-top:0;">
-                <label for="templateSelect">Template</label>
-                <select id="templateSelect"><option value="standard">Standard</option></select>
+                <label>Template</label>
+                <div class="tmpl-tabs">
+                  <button class="tmpl-tab active" data-tmpl="standard">Standard</button>
+                  <button class="tmpl-tab" data-tmpl="sale">Sale</button>
+                  <button class="tmpl-tab" data-tmpl="custom">Custom</button>
+                </div>
               </div>
-              <div class="template-meta">Farben werden vom Master-Template übernommen</div>
+              <div class="template-colors-preview" id="templateColorsPreview"></div>
+              <div class="custom-colors" id="customColors" style="display:none;">
+                <div class="color-fields">
+                  <div class="color-field">
+                    <label>Hintergrund</label>
+                    <div class="color-input-wrap"><input type="color" id="colorBg" value="#63aeab"><span id="colorBgHex">#63aeab</span></div>
+                  </div>
+                  <div class="color-field">
+                    <label>Textfarbe</label>
+                    <div class="color-input-wrap"><input type="color" id="colorText" value="#ffffff"><span id="colorTextHex">#ffffff</span></div>
+                  </div>
+                  <div class="color-field">
+                    <label>CTA Button</label>
+                    <div class="color-input-wrap"><input type="color" id="colorCtaBg" value="#ffffff"><span id="colorCtaBgHex">#ffffff</span></div>
+                  </div>
+                  <div class="color-field">
+                    <label>CTA Text</label>
+                    <div class="color-input-wrap"><input type="color" id="colorCtaText" value="#63aeab"><span id="colorCtaTextHex">#63aeab</span></div>
+                  </div>
+                </div>
+              </div>
             </div>
             <div class="input-group"><label for="headline">Headline</label><input type="text" id="headline" value="Bereit für dein Workout?"><div class="char-hint" id="headlineHint"></div></div>
             <div class="input-group"><label for="subline">Subline</label><input type="text" id="subline" value="Indoor & Outdoor"><div class="char-hint" id="sublineHint"></div></div>
