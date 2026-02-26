@@ -434,107 +434,148 @@ function getImageRegion(cfg) {
   return { imgW, imgH };
 }
 
-// ── Internal framing state (pixel-based) ──────────────────────────────────
-// imgOffsetX/Y: top-left position of the image relative to the stage
-let imgOffsetX = 0;
+// ── Internal framing state ────────────────────────────────────────────────
+let imgOffsetX = 0;  // top-left of the rendered image within the stage (editor px)
 let imgOffsetY = 0;
-let imgRenderW = 0; // total rendered size in editor (cover + padding on all sides)
+let imgRenderW = 0;  // rendered image size in editor (cover + padding)
 let imgRenderH = 0;
-let imgCoverW  = 0; // size at exact object-fit:cover scale to frame — used for % math
-let imgCoverH  = 0;
-let frameX = 0, frameY = 0, frameW = 0, frameH = 0;
+let frameX = 0, frameY = 0, frameW = 0, frameH = 0;  // frame rect in stage (editor px)
+
+// Real banner pixel space — used only for % math
+let realRegionW = 0;  // actual banner image-region width  (e.g. 132 for 300x250)
+let realRegionH = 0;  // actual banner image-region height
+let realNatW    = 0;  // natural image width
+let realNatH    = 0;  // natural image height
+
 let dragImgStartX = 0, dragImgStartY = 0;
 
-const STAGE_H = 320;
-const CONTEXT_PAD_PX = 55; // extra context visible outside the frame on each side
+const STAGE_H        = 320;
+const CONTEXT_PAD_PX = 60;  // extra image visible outside the frame on each side (editor px)
 
-// Convert pixel offset → object-position % matching CSS object-fit:cover
-// CSS object-position: X% Y% means:
-//   img left offset = -(coverOverflowW * X/100)
-//   img top  offset = -(coverOverflowH * Y/100)
-// In our editor the "cover image" starts at (imgOffsetX + CONTEXT_PAD_PX, imgOffsetY + CONTEXT_PAD_PX)
+// ── Real-space helpers ─────────────────────────────────────────────────────
+
+// CSS object-fit:cover scale in real banner pixels
+function realCoverScale() {
+  return Math.max(realRegionW / realNatW, realRegionH / realNatH);
+}
+
+// CSS overflow in real banner pixels
+function realOverflow() {
+  const cs = realCoverScale();
+  return {
+    overW: realNatW * cs - realRegionW,
+    overH: realNatH * cs - realRegionH
+  };
+}
+
+// Editor pixels per real banner pixel
+function editorScale() {
+  return frameW / realRegionW;  // = frameH / realRegionH (same ratio)
+}
+
+// ── Coordinate conversions ─────────────────────────────────────────────────
+
+// Editor pixel offset  →  object-position %
+// The cover portion of the editor image starts at (offX + CONTEXT_PAD_PX, offY + CONTEXT_PAD_PX).
+// Its shift relative to the frame, converted to real banner px, gives the CSS shift,
+// which maps to a percentage of the real overflow.
 function offsetToObjectPos(offX, offY) {
-  const overW = imgCoverW - frameW;
-  const overH = imgCoverH - frameH;
-  // coverLeft relative to frameX: how many px the cover image is shifted left of the frame
-  const shiftX = frameX - (offX + CONTEXT_PAD_PX);
-  const shiftY = frameY - (offY + CONTEXT_PAD_PX);
-  const pctX = overW > 0.5 ? Math.max(0, Math.min(100, (shiftX / overW) * 100)) : 50;
-  const pctY = overH > 0.5 ? Math.max(0, Math.min(100, (shiftY / overH) * 100)) : 50;
+  const { overW, overH } = realOverflow();
+  const es = editorScale();
+
+  const shiftEditorX = frameX - (offX + CONTEXT_PAD_PX);
+  const shiftEditorY = frameY - (offY + CONTEXT_PAD_PX);
+
+  // Convert editor shift back to real banner pixels
+  const shiftRealX = shiftEditorX / es;
+  const shiftRealY = shiftEditorY / es;
+
+  const pctX = overW > 0.5 ? Math.max(0, Math.min(100, (shiftRealX / overW) * 100)) : 50;
+  const pctY = overH > 0.5 ? Math.max(0, Math.min(100, (shiftRealY / overH) * 100)) : 50;
   return { pctX, pctY };
 }
 
-// Convert saved object-position % → pixel offset in the editor
+// object-position %  →  editor pixel offset
 function objectPosToOffset(pctX, pctY) {
-  const overW = imgCoverW - frameW;
-  const overH = imgCoverH - frameH;
-  const shiftX = (pctX / 100) * overW;
-  const shiftY = (pctY / 100) * overH;
-  // cover image left in stage = frameX - shiftX; actual img left = coverLeft - CONTEXT_PAD_PX
+  const { overW, overH } = realOverflow();
+  const es = editorScale();
+
+  const shiftRealX = (pctX / 100) * overW;
+  const shiftRealY = (pctY / 100) * overH;
+
   return {
-    offX: (frameX - shiftX) - CONTEXT_PAD_PX,
-    offY: (frameY - shiftY) - CONTEXT_PAD_PX
+    offX: (frameX - shiftRealX * es) - CONTEXT_PAD_PX,
+    offY: (frameY - shiftRealY * es) - CONTEXT_PAD_PX
   };
 }
 
-// Clamp so the cover portion (not the padding) always fully covers the frame
+// Clamp so the cover portion always fully covers the frame
 function clampOffset(offX, offY) {
-  const overW = imgCoverW - frameW;
-  const overH = imgCoverH - frameH;
+  const cs = realCoverScale();
+  const es = editorScale();
+  const coverEditorW = Math.round(realNatW * cs * es);
+  const coverEditorH = Math.round(realNatH * cs * es);
+
   const coverLeft = offX + CONTEXT_PAD_PX;
   const coverTop  = offY + CONTEXT_PAD_PX;
-  const clampedCoverLeft = Math.min(frameX, Math.max(frameX - overW, coverLeft));
-  const clampedCoverTop  = Math.min(frameY, Math.max(frameY - overH, coverTop));
-  return {
-    offX: clampedCoverLeft - CONTEXT_PAD_PX,
-    offY: clampedCoverTop  - CONTEXT_PAD_PX
-  };
+
+  const minCL = frameX - (coverEditorW - frameW);
+  const minCT = frameY - (coverEditorH - frameH);
+
+  const cl = Math.min(frameX, Math.max(minCL, coverLeft));
+  const ct = Math.min(frameY, Math.max(minCT, coverTop));
+  return { offX: cl - CONTEXT_PAD_PX, offY: ct - CONTEXT_PAD_PX };
 }
 
-// Lay out the frame & image inside the stage based on format
+// ── Layout ─────────────────────────────────────────────────────────────────
+
 function layoutStage(cfg) {
-  const stage = $('cropStage');
+  const stage  = $('cropStage');
   const stageW = stage.offsetWidth;
   const { imgW: regionW, imgH: regionH } = getImageRegion(cfg);
 
-  // Scale the frame to fit inside the stage with some padding
-  const PAD = 48; // space for the label above the frame
-  const maxFW = stageW - PAD * 2;
-  const maxFH = STAGE_H - PAD * 2;
+  realRegionW = regionW;
+  realRegionH = regionH;
+
+  // Scale frame to fit inside stage, leaving room for context padding + label
+  const maxFW = stageW  - CONTEXT_PAD_PX * 2;
+  const maxFH = STAGE_H - CONTEXT_PAD_PX * 2 - 24;  // 24 for label
   const scale = Math.min(maxFW / regionW, maxFH / regionH);
   frameW = Math.round(regionW * scale);
   frameH = Math.round(regionH * scale);
 
   // Center the frame in the stage
-  frameX = Math.round((stageW - frameW) / 2);
-  frameY = Math.round((STAGE_H - frameH) / 2) + (PAD / 4);
+  frameX = Math.round((stageW  - frameW) / 2);
+  frameY = Math.round((STAGE_H - frameH) / 2) + 12;  // +12 shifts down slightly for label
 
-  // Position the frame element
   const frame = $('cropFrame');
   frame.style.left   = frameX + 'px';
   frame.style.top    = frameY + 'px';
   frame.style.width  = frameW + 'px';
   frame.style.height = frameH + 'px';
 
-  $('cropFrameLabel').textContent = `${Math.round(regionW)} × ${Math.round(regionH)} px`;
+  $('cropFrameLabel').textContent = `${Math.round(regionW)} x ${Math.round(regionH)} px`;
 
-  // Update overlay panels
   $('cropOvTop').style.cssText    = `left:0;top:0;width:100%;height:${frameY}px;`;
-  $('cropOvBottom').style.cssText = `left:0;top:${frameY+frameH}px;width:100%;bottom:0;height:${STAGE_H - frameY - frameH}px;`;
+  $('cropOvBottom').style.cssText = `left:0;top:${frameY+frameH}px;width:100%;height:${STAGE_H-frameY-frameH}px;`;
   $('cropOvLeft').style.cssText   = `left:0;top:${frameY}px;width:${frameX}px;height:${frameH}px;`;
-  $('cropOvRight').style.cssText  = `left:${frameX+frameW}px;top:${frameY}px;right:0;width:${stageW-frameX-frameW}px;height:${frameH}px;`;
+  $('cropOvRight').style.cssText  = `left:${frameX+frameW}px;top:${frameY}px;width:${stageW-frameX-frameW}px;height:${frameH}px;`;
 }
 
-// Scale image to cover the frame exactly, then add CONTEXT_PAD_PX on each side
 function layoutImage(naturalW, naturalH) {
-  // Exact cover scale for this frame
-  const coverScale = Math.max(frameW / naturalW, frameH / naturalH);
-  imgCoverW = Math.round(naturalW * coverScale);
-  imgCoverH = Math.round(naturalH * coverScale);
+  realNatW = naturalW;
+  realNatH = naturalH;
 
-  // Total rendered size includes context padding on all sides
-  imgRenderW = imgCoverW + CONTEXT_PAD_PX * 2;
-  imgRenderH = imgCoverH + CONTEXT_PAD_PX * 2;
+  const cs = realCoverScale();  // real banner cover scale
+  const es = editorScale();     // editor px per banner px
+
+  // Cover size in editor pixels (this is what exactly fills the frame)
+  const coverEditorW = Math.round(naturalW * cs * es);
+  const coverEditorH = Math.round(naturalH * cs * es);
+
+  // Add context padding so user sees surrounding image
+  imgRenderW = coverEditorW + CONTEXT_PAD_PX * 2;
+  imgRenderH = coverEditorH + CONTEXT_PAD_PX * 2;
 
   const img = $('cropEditorImage');
   img.style.width  = imgRenderW + 'px';
