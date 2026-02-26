@@ -387,19 +387,26 @@ async function createPreview() {
     
     header.querySelector('.btn-crop').addEventListener('click', () => openCropModal(format));
     
+    // Scale banner so its longest dimension fits within MAX_PREVIEW_SIZE
+    const MAX_PREVIEW_SIZE = 300;
+    const scaleF = Math.min(1, MAX_PREVIEW_SIZE / Math.max(cfg.w, cfg.h));
+    const scaledW = Math.round(cfg.w * scaleF);
+    const scaledH = Math.round(cfg.h * scaleF);
+
     const scrollWrap = document.createElement('div');
     scrollWrap.className = 'preview-scroll-wrap';
     
     const viewport = document.createElement('div');
     viewport.className = 'iframe-viewport';
-    viewport.style.width = cfg.w + 'px';
-    viewport.style.height = cfg.h + 'px';
+    viewport.style.width  = scaledW + 'px';
+    viewport.style.height = scaledH + 'px';
     
     const iframe = document.createElement('iframe');
-    iframe.width = cfg.w;
+    iframe.width  = cfg.w;
     iframe.height = cfg.h;
-    iframe.style.width = cfg.w + 'px';
+    iframe.style.width  = cfg.w + 'px';
     iframe.style.height = cfg.h + 'px';
+    iframe.style.transform = `scale(${scaleF})`;
     iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin');
     
     const blob = new Blob([html], { type: 'text/html' });
