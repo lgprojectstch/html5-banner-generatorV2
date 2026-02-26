@@ -25,7 +25,14 @@ let appData = {
   subline: 'Indoor & Outdoor',
   ctaText: 'Jetzt shoppen',
   landingUrl: '',
-  zipName: ''
+  zipName: '',
+  template: 'standard',
+  colors: { bg: '#63aeab', text: '#ffffff', ctaBg: '#ffffff', ctaText: '#63aeab' }
+};
+
+const TEMPLATE_PRESETS = {
+  standard: { bg: '#63aeab', text: '#ffffff', ctaBg: '#ffffff', ctaText: '#63aeab' },
+  sale:     { bg: '#be2d2f', text: '#ffffff', ctaBg: '#ffffff', ctaText: '#be2d2f' },
 };
 
 // Crop state
@@ -65,6 +72,34 @@ function init() {
   bindCharLimit('headline', 'headlineHint', TEXT_LIMITS.headline, v => appData.headline = v);
   bindCharLimit('subline', 'sublineHint', TEXT_LIMITS.subline, v => appData.subline = v);
   bindCharLimit('ctaText', 'ctaHint', TEXT_LIMITS.ctaText, v => appData.ctaText = v);
+
+  // Template tabs
+  document.querySelectorAll('.tmpl-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tmpl-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      appData.template = btn.dataset.tmpl;
+      if (appData.template !== 'custom') {
+        appData.colors = { ...TEMPLATE_PRESETS[appData.template] };
+      }
+      $('customColors').style.display = appData.template === 'custom' ? 'block' : 'none';
+      renderTemplateColorPreview();
+    });
+  });
+
+  // Custom color inputs
+  ['Bg', 'Text', 'CtaBg', 'CtaText'].forEach(key => {
+    const inputId = 'color' + key;
+    const hexId   = 'color' + key + 'Hex';
+    const dataKey = key.charAt(0).toLowerCase() + key.slice(1);
+    $(inputId).addEventListener('input', e => {
+      appData.colors[dataKey] = e.target.value;
+      $(hexId).textContent = e.target.value;
+      renderTemplateColorPreview();
+    });
+  });
+
+  renderTemplateColorPreview();
 
   // URL inputs
   $('clickUrl').addEventListener('input', e => appData.landingUrl = e.target.value);
@@ -290,6 +325,27 @@ function renderImageList() {
   });
 }
 
+// ── Template color helpers ─────────────────────────────────────────────────
+
+function renderTemplateColorPreview() {
+  const c = appData.colors;
+  const labels = [
+    { key: c.bg,      label: 'Hintergrund' },
+    { key: c.text,    label: 'Text' },
+    { key: c.ctaBg,   label: 'CTA Button' },
+    { key: c.ctaText, label: 'CTA Text' },
+  ];
+  const wrap = $('templateColorsPreview');
+  if (!wrap) return;
+  wrap.innerHTML = labels.map(s =>
+    `<span class="color-swatch"><span class="color-swatch-dot" style="background:${s.key}"></span>${s.label}</span>`
+  ).join('');
+}
+
+function getColors() {
+  return appData.colors;
+}
+
 // Click URL
 function getFinalClickTag() {
   let url = (appData.landingUrl || '').trim();
@@ -371,7 +427,8 @@ async function createPreview() {
       ctaText: appData.ctaText,
       clickTag: getFinalClickTag(),
       logoSrc: logoSrc || 'Logo.png',
-      cropSettings
+      cropSettings,
+      colors: getColors()
     });
     
     const item = document.createElement('div');
@@ -682,7 +739,8 @@ async function updateCropPreview() {
     ctaText: appData.ctaText,
     clickTag: getFinalClickTag(),
     logoSrc: logoSrc || 'Logo.png',
-    cropSettings
+    cropSettings,
+    colors: getColors()
   });
   
   const blob = new Blob([html], { type: 'text/html' });
@@ -850,7 +908,8 @@ async function exportAllBanners() {
       ctaText: appData.ctaText,
       clickTag: getFinalClickTag(),
       logoSrc: 'Logo.png',
-      cropSettings
+      cropSettings,
+      colors: getColors()
     });
     
     zip.file('index.html', html);
