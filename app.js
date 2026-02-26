@@ -438,48 +438,56 @@ function getImageRegion(cfg) {
 // imgOffsetX/Y: top-left position of the image relative to the stage
 let imgOffsetX = 0;
 let imgOffsetY = 0;
-let imgRenderW = 0; // rendered image width in px
-let imgRenderH = 0; // rendered image height in px
-let frameX = 0, frameY = 0, frameW = 0, frameH = 0; // frame rect within stage
+let imgRenderW = 0; // total rendered size in editor (cover + padding on all sides)
+let imgRenderH = 0;
+let imgCoverW  = 0; // size at exact object-fit:cover scale to frame — used for % math
+let imgCoverH  = 0;
+let frameX = 0, frameY = 0, frameW = 0, frameH = 0;
 let dragImgStartX = 0, dragImgStartY = 0;
 
-const STAGE_H = 320; // fixed stage height in px
+const STAGE_H = 320;
+const CONTEXT_PAD_PX = 55; // extra context visible outside the frame on each side
 
-// Convert current pixel offset → object-position % (matches CSS object-fit:cover behavior)
+// Convert pixel offset → object-position % matching CSS object-fit:cover
+// CSS object-position: X% Y% means:
+//   img left offset = -(coverOverflowW * X/100)
+//   img top  offset = -(coverOverflowH * Y/100)
+// In our editor the "cover image" starts at (imgOffsetX + CONTEXT_PAD_PX, imgOffsetY + CONTEXT_PAD_PX)
 function offsetToObjectPos(offX, offY) {
-  // Available "travel" range for the image beyond the frame
-  const travelX = imgRenderW - frameW;
-  const travelY = imgRenderH - frameH;
-  // offX is relative to stage; frame starts at frameX
-  // How far into the travel range are we? (offset of img relative to frame top-left)
-  const relX = frameX - offX; // how much image is shifted left relative to frame
-  const relY = frameY - offY;
-  const pctX = travelX > 0 ? Math.max(0, Math.min(100, (relX / travelX) * 100)) : 50;
-  const pctY = travelY > 0 ? Math.max(0, Math.min(100, (relY / travelY) * 100)) : 50;
+  const overW = imgCoverW - frameW;
+  const overH = imgCoverH - frameH;
+  // coverLeft relative to frameX: how many px the cover image is shifted left of the frame
+  const shiftX = frameX - (offX + CONTEXT_PAD_PX);
+  const shiftY = frameY - (offY + CONTEXT_PAD_PX);
+  const pctX = overW > 0.5 ? Math.max(0, Math.min(100, (shiftX / overW) * 100)) : 50;
+  const pctY = overH > 0.5 ? Math.max(0, Math.min(100, (shiftY / overH) * 100)) : 50;
   return { pctX, pctY };
 }
 
-// Convert saved object-position % → pixel offset
+// Convert saved object-position % → pixel offset in the editor
 function objectPosToOffset(pctX, pctY) {
-  const travelX = imgRenderW - frameW;
-  const travelY = imgRenderH - frameH;
-  const relX = (pctX / 100) * travelX;
-  const relY = (pctY / 100) * travelY;
+  const overW = imgCoverW - frameW;
+  const overH = imgCoverH - frameH;
+  const shiftX = (pctX / 100) * overW;
+  const shiftY = (pctY / 100) * overH;
+  // cover image left in stage = frameX - shiftX; actual img left = coverLeft - CONTEXT_PAD_PX
   return {
-    offX: frameX - relX,
-    offY: frameY - relY
+    offX: (frameX - shiftX) - CONTEXT_PAD_PX,
+    offY: (frameY - shiftY) - CONTEXT_PAD_PX
   };
 }
 
-// Clamp offset so image always fully covers the frame
+// Clamp so the cover portion (not the padding) always fully covers the frame
 function clampOffset(offX, offY) {
-  const maxX = frameX; // img left edge ≤ frame left edge
-  const minX = frameX - (imgRenderW - frameW); // img right edge ≥ frame right edge
-  const maxY = frameY;
-  const minY = frameY - (imgRenderH - frameH);
+  const overW = imgCoverW - frameW;
+  const overH = imgCoverH - frameH;
+  const coverLeft = offX + CONTEXT_PAD_PX;
+  const coverTop  = offY + CONTEXT_PAD_PX;
+  const clampedCoverLeft = Math.min(frameX, Math.max(frameX - overW, coverLeft));
+  const clampedCoverTop  = Math.min(frameY, Math.max(frameY - overH, coverTop));
   return {
-    offX: Math.min(maxX, Math.max(minX, offX)),
-    offY: Math.min(maxY, Math.max(minY, offY))
+    offX: clampedCoverLeft - CONTEXT_PAD_PX,
+    offY: clampedCoverTop  - CONTEXT_PAD_PX
   };
 }
 
@@ -517,24 +525,16 @@ function layoutStage(cfg) {
   $('cropOvRight').style.cssText  = `left:${frameX+frameW}px;top:${frameY}px;right:0;width:${stageW-frameX-frameW}px;height:${frameH}px;`;
 }
 
-// Lay out the image at its natural aspect ratio, scaled to cover the frame + some breathing room
+// Scale image to cover the frame exactly, then add CONTEXT_PAD_PX on each side
 function layoutImage(naturalW, naturalH) {
-  const imgAspect = naturalW / naturalH;
-  const frameAspect = frameW / frameH;
+  // Exact cover scale for this frame
+  const coverScale = Math.max(frameW / naturalW, frameH / naturalH);
+  imgCoverW = Math.round(naturalW * coverScale);
+  imgCoverH = Math.round(naturalH * coverScale);
 
-  // Scale image so it fully covers the frame, then add a 40% zoom-out margin for context
-  const CONTEXT_FACTOR = 1.4;
-  let w, h;
-  if (imgAspect > frameAspect) {
-    // image is wider → match height
-    h = frameH * CONTEXT_FACTOR;
-    w = h * imgAspect;
-  } else {
-    w = frameW * CONTEXT_FACTOR;
-    h = w / imgAspect;
-  }
-  imgRenderW = Math.round(w);
-  imgRenderH = Math.round(h);
+  // Total rendered size includes context padding on all sides
+  imgRenderW = imgCoverW + CONTEXT_PAD_PX * 2;
+  imgRenderH = imgCoverH + CONTEXT_PAD_PX * 2;
 
   const img = $('cropEditorImage');
   img.style.width  = imgRenderW + 'px';
