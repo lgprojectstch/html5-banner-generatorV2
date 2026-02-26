@@ -67,6 +67,11 @@
     .details-body{padding:0 18px 18px;font-size:.92rem;}
     .details-label{font-weight:700;color:#6b7280;font-size:.82rem;text-transform:uppercase;letter-spacing:.4px;}
     .mono{font-family:'SF Mono','Fira Code',monospace;font-size:.82rem;word-break:break-all;background:#f3f4f6;padding:6px 8px;border-radius:6px;margin-top:4px;}
+    .copy-row{display:flex;align-items:center;gap:8px;margin-top:4px;}
+    .copy-row .mono-field{font-family:'SF Mono','Fira Code',monospace;font-size:.82rem;background:#f3f4f6;padding:6px 10px;border-radius:6px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
+    .copy-btn{flex-shrink:0;display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:7px;border:1px solid #e5e7eb;background:#fff;font-size:.78rem;font-weight:600;cursor:pointer;color:#374151;transition:background .15s,color .15s;}
+    .copy-btn:hover{background:var(--primary);color:#fff;border-color:var(--primary);}
+    .copy-btn.copied{background:#22c55e;color:#fff;border-color:#22c55e;}
     .upload-area{border:3px dashed #ddd;border-radius:var(--border-radius);padding:32px;text-align:center;cursor:pointer;transition:all .25s ease;position:relative;background:#f8f9fa;}
     .upload-area:hover,.upload-area.dragover{border-color:var(--primary);background:rgba(102,126,234,0.06);}
     .upload-area input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;}
@@ -308,8 +313,16 @@
               <summary>Details <i class="fas fa-chevron-down"></i></summary>
               <div class="details-body">
                 <div class="details-label">Naming</div><div id="detailName">-</div>
-                <div class="details-label" style="margin-top:12px;">Final clickTag</div><div class="mono" id="detailClickTag">-</div>
-                <div class="details-label" style="margin-top:12px;">Impr.-Tag</div><div class="mono" id="detailImprTag">-</div>
+                <div class="details-label" style="margin-top:12px;">Final clickTag</div>
+                <div class="copy-row">
+                  <span class="mono-field" id="detailClickTag">-</span>
+                  <button class="copy-btn" id="copyClickTag" onclick="copyDetail('detailClickTag','copyClickTag')"><i class="fas fa-copy"></i> Kopieren</button>
+                </div>
+                <div class="details-label" style="margin-top:12px;">Impr.-Tag</div>
+                <div class="copy-row">
+                  <span class="mono-field" id="detailImprTag">-</span>
+                  <button class="copy-btn" id="copyImprTag" onclick="copyDetail('detailImprTag','copyImprTag')"><i class="fas fa-copy"></i> Kopieren</button>
+                </div>
               </div>
             </details>
           </div>
@@ -378,6 +391,24 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <script src="banner-template.js"></script>
   <script src="app.js"></script>
+  <script>
+    function copyDetail(fieldId, btnId) {
+      const text = document.getElementById(fieldId).textContent || '';
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.getElementById(btnId);
+        btn.classList.add('copied');
+        btn.innerHTML = '<i class="fas fa-check"></i> Kopiert';
+        setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML = '<i class="fas fa-copy"></i> Kopieren'; }, 2000);
+      }).catch(() => {
+        const ta = document.createElement('textarea');
+        ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+        const btn = document.getElementById(btnId);
+        btn.classList.add('copied'); btn.innerHTML = '<i class="fas fa-check"></i> Kopiert';
+        setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML = '<i class="fas fa-copy"></i> Kopieren'; }, 2000);
+      });
+    }
+  </script>
 </body>
 </html>
 
