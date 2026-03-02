@@ -9,7 +9,7 @@ const FONT_FILES = [
   ASSETS_DIR + '/fonts/InterstateWGL-Regular.woff2'
 ];
 
-const IMAGE_IMPORT = { maxLongEdge: 1200, quality: 0.76, background: '#ffffff' };
+const IMAGE_IMPORT = { maxLongEdge: 1200, quality: 0.82, background: '#ffffff' };
 const TEXT_LIMITS = { headline: 25, subline: 30, ctaText: 17 };
 const IMPR_TAG = '<img src="https://tagm.tchibo.de/ai.aspx?extProvId=300&extProvApi=129768..." style="display:none">';
 
