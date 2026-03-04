@@ -561,6 +561,46 @@
       text-transform: uppercase;
       letter-spacing: 0.05em;
     }
+
+    /* ─── Logo Toggle ─────────────────────────────── */
+    .logo-toggle-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border-b);
+    }
+    .logo-toggle-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--text-2);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+    }
+    .logo-btn-group { display: flex; gap: 6px; }
+    .logo-btn {
+      padding: 4px 13px;
+      border-radius: 999px;
+      border: 1.5px solid var(--border-b);
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      background: var(--surface);
+      color: var(--text-2);
+      transition: border-color 0.18s, background 0.18s, color 0.18s;
+    }
+    .logo-btn.active-white {
+      background: #ffffff;
+      border-color: #aaa;
+      color: #333;
+    }
+    .logo-btn.active-black {
+      background: #1a1a1a;
+      border-color: #555;
+      color: #fff;
+    }
     .color-input-wrap { display: flex; align-items: center; gap: 7px; }
     .color-input-wrap input[type="color"] {
       width: 32px; height: 28px;
@@ -1249,6 +1289,14 @@
                       <input type="color" id="colorCtaText" value="#63aeab">
                       <span id="colorCtaTextHex">#63aeab</span>
                     </div>
+                  </div>
+                </div>
+                <!-- Logo Auswahl -->
+                <div class="logo-toggle-row">
+                  <span class="logo-toggle-label">Logo</span>
+                  <div class="logo-btn-group">
+                    <button class="logo-btn active-white" id="logoBtnWhite" onclick="setLogoVariant('white')">Weiß</button>
+                    <button class="logo-btn" id="logoBtnBlack" onclick="setLogoVariant('black')">Schwarz</button>
                   </div>
                 </div>
               </div>
