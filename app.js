@@ -482,6 +482,9 @@ async function createPreview() {
       imprTag: getImprTag()
     });
     
+    const item = document.createElement('div');
+    item.className = 'preview-item';
+
     const header = document.createElement('div');
     header.className = 'preview-item-header';
     header.innerHTML = `
