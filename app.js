@@ -946,7 +946,8 @@ async function handleExport() {
 
 async function exportAllBanners() {
   const baseName = (appData.zipName || 'banner').trim().replace(/\s+/g, '_').replace(/[^\w.\-]/g, '_');
-  
+  const outerZip = new JSZip();
+
   for (const format of selectedFormats) {
     const zip = new JSZip();
     
@@ -990,24 +991,30 @@ async function exportAllBanners() {
       }
     }
     
-    // Generate and download
-    const blob = await zip.generateAsync({
+    // Generate format ZIP and add it into the outer ZIP
+    const formatBlob = await zip.generateAsync({
       type: 'blob',
       compression: 'DEFLATE',
       compressionOptions: { level: 6 }
     });
-    
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `${format}_${baseName}.zip`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(a.href);
-    
-    // Small delay between downloads
-    await new Promise(r => setTimeout(r, 300));
+    outerZip.file(`${format}_${baseName}.zip`, formatBlob);
   }
+
+  // Download single outer ZIP containing all format ZIPs
+  const outerBlob = await outerZip.generateAsync({
+    type: 'blob',
+    compression: 'DEFLATE',
+    compressionOptions: { level: 6 }
+  });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(outerBlob);
+  a.download = `${baseName}.zip`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
+
+  await new Promise(r => setTimeout(r, 300));
 
   // Generate and download CSV after all banner ZIPs
   await exportTrackingCSV(baseName);
