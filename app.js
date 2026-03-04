@@ -1008,4 +1008,57 @@ async function exportAllBanners() {
     // Small delay between downloads
     await new Promise(r => setTimeout(r, 300));
   }
+
+  // Generate and download CSV after all banner ZIPs
+  await exportTrackingCSV(baseName);
+}
+
+async function exportTrackingCSV(baseName) {
+  const clickTag = getFinalClickTag();
+  const imprTag = getImprTag();
+
+  // CSV header row (semicolon-delimited, matching template_for_display_creatives)
+  const header = [
+    'Creative name',
+    'Main asset file name',
+    'Backup image file name (for HTML5 only)',
+    'Click-through URL',
+    'Dimensions (width x height)',
+    'Appended HTML tag (Optional)',
+    'Integration code (Optional)',
+    'Notes (Optional)'
+  ].join(';');
+
+  // One data row per selected format
+  const rows = selectedFormats.map(format => {
+    const cfg = FORMAT_CONFIGS[format];
+    const creativeName = `${format}_${baseName}`;
+    const zipName = `${creativeName}.zip`;
+    const dimension = `${cfg.w}x${cfg.h}`;
+
+    // Escape semicolons inside field values just in case
+    const escape = v => (v || '').replace(/;/g, ',');
+
+    return [
+      escape(creativeName),  // Creative name
+      escape(zipName),       // Main asset file name
+      '',                    // Backup image (not needed)
+      escape(clickTag),      // Click-through URL
+      dimension,             // Dimensions
+      escape(imprTag),       // Appended HTML tag (ImpressionTag)
+      '',                    // Integration code
+      ''                     // Notes
+    ].join(';');
+  });
+
+  const csvContent = [header, ...rows].join('\r\n');
+  const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${baseName}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
 }
