@@ -15,7 +15,11 @@ const FONT_FILES = [
 
 const IMAGE_IMPORT = { maxLongEdge: 1200, quality: 0.82, background: '#ffffff' };
 const TEXT_LIMITS = { headline: 25, subline: 30, ctaText: 17 };
-const IMPR_TAG = '<img src="https://tagm.tchibo.de/ai.aspx?extProvId=300&extProvApi=129768..." style="display:none">';
+const IMPR_TAG_DE = '<img src="https://tagm.tchibo.de/ai.aspx?extProvId=300&extProvApi=129768&extPu=tchibo-dv360&extLi=${INSERTION_ORDER_ID}&extPm=${CAMPAIGN_ID}&extCr=${CREATIVE_ID}&adslotid=${PUBLISHER_ID}&gdpr=${GDPR}&gdpr_consent=${GDPR_CONSENT_312}&cb=${CACHEBUSTER}" width="1" height="1" style="display:none" alt="">';
+const IMPR_TAG_CZ = '<img src="https://tagm.tchibo.cz/ai.aspx?extProvId=300&extProvApi=tchibo-cz-dv360&extPu=tchibo-dv360&extLi=${INSERTION_ORDER_ID}&extPm=${CAMPAIGN_ID}&extCr=${CREATIVE_ID}&adslotid=${PUBLISHER_ID}&gdpr=${GDPR}&gdpr_consent=${GDPR_CONSENT_312}" style="display:none">';
+function getImprTag() {
+  return appData.country === 'cz' ? IMPR_TAG_CZ : IMPR_TAG_DE;
+}
 
 // State
 let selectedFormats = [];
@@ -31,6 +35,7 @@ let appData = {
   zipName: '',
   template: 'standard',
   logoVariant: 'white',
+  country: 'de',
   colors: { bg: '#63aeab', text: '#ffffff', ctaBg: '#ffffff', ctaText: '#63aeab' }
 };
 
@@ -365,12 +370,33 @@ function setLogoVariant(variant) {
   }
 }
 
+// Country
+function setCountry(country) {
+  appData.country = country;
+  const btnDE = document.getElementById('countryBtnDE');
+  const btnCZ = document.getElementById('countryBtnCZ');
+  if (btnDE && btnCZ) {
+    btnDE.className = 'logo-btn' + (country === 'de' ? ' active-de' : '');
+    btnCZ.className = 'logo-btn' + (country === 'cz' ? ' active-cz' : '');
+  }
+  const hint = document.getElementById('urlHintText');
+  if (hint) {
+    hint.innerHTML = country === 'cz'
+      ? 'Die Ziel-URL wird direkt in den CZ-Tracking-Link eingebettet.'
+      : '<b>utm_source=dbm</b> &amp; <b>utm_medium=cpm</b> werden automatisch zur URL ergänzt.';
+  }
+}
+
 // Click URL
 function getFinalClickTag() {
   let url = (appData.landingUrl || '').trim();
   if (!url) return '';
   if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
-  
+
+  if (appData.country === 'cz') {
+    return 'https://tagm.tchibo.cz/cl.aspx?extProvId=300&extProvApi=tchibo-cz-dv360&extPu=tchibo-dv360&extLi=${INSERTION_ORDER_ID}&extPm=${CAMPAIGN_ID}&extCr=${CREATIVE_ID}&adslotid=${PUBLISHER_ID}&gdpr=${GDPR}&gdpr_consent=${GDPR_CONSENT_312}&url=' + encodeURIComponent(url);
+  }
+
   try {
     const u = new URL(url);
     if (!u.searchParams.has('utm_source')) u.searchParams.set('utm_source', 'dbm');
@@ -431,7 +457,7 @@ async function createPreview() {
   
   $('detailName').textContent = appData.zipName || '-';
   $('detailClickTag').textContent = getFinalClickTag() || '-';
-  $('detailImprTag').textContent = IMPR_TAG;
+  $('detailImprTag').textContent = getImprTag();
   
   const logoSrc = await getLogoDataUrl();
 
@@ -452,11 +478,9 @@ async function createPreview() {
       clickTag: getFinalClickTag(),
       logoSrc: logoSrc || 'Logo.png',
       cropSettings,
-      colors: getColors()
+      colors: getColors(),
+      imprTag: getImprTag()
     });
-    
-    const item = document.createElement('div');
-    item.className = 'preview-item';
     
     const header = document.createElement('div');
     header.className = 'preview-item-header';
@@ -764,7 +788,8 @@ async function updateCropPreview() {
     clickTag: getFinalClickTag(),
     logoSrc: logoSrc || 'Logo.png',
     cropSettings,
-    colors: getColors()
+    colors: getColors(),
+    imprTag: getImprTag()
   });
   
   const blob = new Blob([html], { type: 'text/html' });
@@ -933,7 +958,8 @@ async function exportAllBanners() {
       clickTag: getFinalClickTag(),
       logoSrc: 'Logo.png',
       cropSettings,
-      colors: getColors()
+      colors: getColors(),
+      imprTag: getImprTag()
     });
     
     zip.file('index.html', html);
