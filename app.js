@@ -3,7 +3,11 @@
 
 const GATE_PASSWORD = 'html5';
 const ASSETS_DIR = 'assets';
-const LOGO_ASSET = ASSETS_DIR + '/Logo.png';
+const LOGO_ASSET_WHITE = ASSETS_DIR + '/LogoW.png';
+const LOGO_ASSET_BLACK = ASSETS_DIR + '/LogoS.png';
+function getLogoAsset() {
+  return appData.logoVariant === 'black' ? LOGO_ASSET_BLACK : LOGO_ASSET_WHITE;
+}
 const FONT_FILES = [
   ASSETS_DIR + '/fonts/InterstateWGL-Bold.woff2',
   ASSETS_DIR + '/fonts/InterstateWGL-Regular.woff2'
@@ -17,7 +21,6 @@ const IMPR_TAG = '<img src="https://tagm.tchibo.de/ai.aspx?extProvId=300&extProv
 let selectedFormats = [];
 let uploadedImages = [];
 let cropSettings = {};
-let cachedLogoDataUrl = null;
 let previewHtmlUrls = [];
 
 let appData = {
@@ -27,6 +30,7 @@ let appData = {
   landingUrl: '',
   zipName: '',
   template: 'standard',
+  logoVariant: 'white',
   colors: { bg: '#63aeab', text: '#ffffff', ctaBg: '#ffffff', ctaText: '#63aeab' }
 };
 
@@ -346,6 +350,21 @@ function getColors() {
   return appData.colors;
 }
 
+// Logo Variant
+function setLogoVariant(variant) {
+  appData.logoVariant = variant;
+  // Reset cache so next preview loads the correct logo
+  cachedLogoDataUrl = null;
+  cachedLogoVariant = null;
+  // Update button states
+  const btnWhite = document.getElementById('logoBtnWhite');
+  const btnBlack = document.getElementById('logoBtnBlack');
+  if (btnWhite && btnBlack) {
+    btnWhite.className = 'logo-btn' + (variant === 'white' ? ' active-white' : '');
+    btnBlack.className = 'logo-btn' + (variant === 'black' ? ' active-black' : '');
+  }
+}
+
 // Click URL
 function getFinalClickTag() {
   let url = (appData.landingUrl || '').trim();
@@ -363,17 +382,22 @@ function getFinalClickTag() {
 }
 
 // Logo
+let cachedLogoDataUrl = null;
+let cachedLogoVariant = null;
 async function getLogoDataUrl() {
-  if (cachedLogoDataUrl) return cachedLogoDataUrl;
+  const currentVariant = appData.logoVariant;
+  if (cachedLogoDataUrl && cachedLogoVariant === currentVariant) return cachedLogoDataUrl;
   try {
-    const res = await fetch(LOGO_ASSET);
+    const res = await fetch(getLogoAsset());
     const blob = await res.blob();
-    return cachedLogoDataUrl = await new Promise((resolve, reject) => {
+    cachedLogoDataUrl = await new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => resolve(reader.result);
       reader.onerror = reject;
       reader.readAsDataURL(blob);
     });
+    cachedLogoVariant = currentVariant;
+    return cachedLogoDataUrl;
   } catch (e) {
     return null;
   }
@@ -919,7 +943,7 @@ async function exportAllBanners() {
     
     // Add logo
     try {
-      const logoRes = await fetch(LOGO_ASSET);
+      const logoRes = await fetch(getLogoAsset());
       const logoBlob = await logoRes.blob();
       zip.file('Logo.png', logoBlob);
     } catch (e) {
