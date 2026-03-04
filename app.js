@@ -1,4 +1,4 @@
-// HTML5 Banner Generator - Main Application
+// HTML5 Banner Generator - Main Application APP
 // ==========================================
 
 const GATE_PASSWORD = 'html5';
