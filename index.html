@@ -562,8 +562,9 @@
       letter-spacing: 0.05em;
     }
 
-    /* ─── Logo Toggle ─────────────────────────────── */
-    .logo-toggle-row {
+    /* ─── Logo Toggle / Country Toggle ───────────── */
+    .logo-toggle-row,
+    .country-toggle-row {
       display: flex;
       align-items: center;
       gap: 10px;
@@ -571,7 +572,8 @@
       padding-top: 10px;
       border-top: 1px solid var(--border-b);
     }
-    .logo-toggle-label {
+    .logo-toggle-label,
+    .country-toggle-label {
       font-size: 0.7rem;
       font-weight: 700;
       color: var(--text-2);
@@ -599,6 +601,12 @@
     .logo-btn.active-black {
       background: #1a1a1a;
       border-color: #555;
+      color: #fff;
+    }
+    .logo-btn.active-de,
+    .logo-btn.active-cz {
+      background: var(--accent);
+      border-color: var(--accent);
       color: #fff;
     }
     .color-input-wrap { display: flex; align-items: center; gap: 7px; }
@@ -1324,7 +1332,14 @@
               <span class="card-icon green"><i class="fas fa-link"></i></span>
               Click-URL &amp; Export
             </h3>
-            <div class="input-group">
+            <div class="country-toggle-row">
+              <span class="country-toggle-label">Land</span>
+              <div class="logo-btn-group">
+                <button class="logo-btn active-de" id="countryBtnDE" onclick="setCountry('de')">DE</button>
+                <button class="logo-btn" id="countryBtnCZ" onclick="setCountry('cz')">CZ</button>
+              </div>
+            </div>
+            <div class="input-group" style="margin-top:10px;">
               <label for="zipName">Naming (für ZIP-Datei)</label>
               <input type="text" id="zipName" placeholder="z.B. KW02_BackToGym">
             </div>
@@ -1332,7 +1347,7 @@
               <label for="clickUrl">Ziel-URL</label>
               <input type="url" id="clickUrl" placeholder="https://example.com">
             </div>
-            <div class="hint-text">
+            <div class="hint-text" id="urlHintText">
               <b>utm_source=dbm</b> &amp; <b>utm_medium=cpm</b> werden automatisch zur URL ergänzt.
             </div>
           </div>
