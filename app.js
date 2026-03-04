@@ -15,7 +15,8 @@ const FONT_FILES = [
 
 const IMAGE_IMPORT = { maxLongEdge: 1200, quality: 0.82, background: '#ffffff' };
 const TEXT_LIMITS = { headline: 25, subline: 30, ctaText: 17 };
-const IMPR_TAG_DE = '<img src="https://tagm.tchibo.de/ai.aspx?extProvId=300&extProvApi=129768&extPu=tchibo-dv360&extLi=${INSERTION_ORDER_ID}&extPm=${CAMPAIGN_ID}&extCr=${CREATIVE_ID}&adslotid=${PUBLISHER_ID}&gdpr=${GDPR}&gdpr_consent=${GDPR_CONSENT_312}&cb=${CACHEBUSTER}" width="1" height="1" style="display:none" alt="">';
+const IMPR_TAG_DE = '<img src="https://tagm.tchibo.de/ai.aspx?extProvId=300&extProvApi=129768&extPu=tchibo-dv360&extLi=${INSERTION_ORDER_ID}&extPm=${CAMPAIGN_ID}&extCr=${CREATIVE_ID}&adslotid=${PUBLISHER_ID}&gdpr=${GDPR}&gdpr_consent=${GDPR_CONSENT_312}" style="display:none">';
+
 const IMPR_TAG_CZ = '<img src="https://tagm.tchibo.cz/ai.aspx?extProvId=300&extProvApi=tchibo-cz-dv360&extPu=tchibo-dv360&extLi=${INSERTION_ORDER_ID}&extPm=${CAMPAIGN_ID}&extCr=${CREATIVE_ID}&adslotid=${PUBLISHER_ID}&gdpr=${GDPR}&gdpr_consent=${GDPR_CONSENT_312}" style="display:none">';
 function getImprTag() {
   return appData.country === 'cz' ? IMPR_TAG_CZ : IMPR_TAG_DE;
@@ -394,14 +395,16 @@ function getFinalClickTag() {
   if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
 
   if (appData.country === 'cz') {
-    return 'https://tagm.tchibo.cz/cl.aspx?extProvId=300&extProvApi=tchibo-cz-dv360&extPu=tchibo-dv360&extLi=${INSERTION_ORDER_ID}&extPm=${CAMPAIGN_ID}&extCr=${CREATIVE_ID}&adslotid=${PUBLISHER_ID}&gdpr=${GDPR}&gdpr_consent=${GDPR_CONSENT_312}&url=' + encodeURIComponent(url);
+    return 'https://tagm.tchibo.cz/cl.aspx?extProvId=300&extProvApi=tchibo-cz-dv360&extPu=tchibo-dv360&extLi=${INSERTION_ORDER_ID}&extPm=${CAMPAIGN_ID}&extCr=${CREATIVE_ID}&adslotid=${PUBLISHER_ID}&gdpr=${GDPR}&gdpr_consent=${GDPR_CONSENT_312}&url=' + url;
   }
 
+  // DE: build URL with utm params appended, no encoding of the full URL
   try {
     const u = new URL(url);
     if (!u.searchParams.has('utm_source')) u.searchParams.set('utm_source', 'dbm');
     if (!u.searchParams.has('utm_medium')) u.searchParams.set('utm_medium', 'cpm');
-    return 'https://tagm.tchibo.de/cl.aspx?extProvId=300&extProvApi=129768&extPu=tchibo-dv360&extLi=${INSERTION_ORDER_ID}&extPm=${CAMPAIGN_ID}&extCr=${CREATIVE_ID}&adslotid=${PUBLISHER_ID}&gdpr=${GDPR}&gdpr_consent=${GDPR_CONSENT_312}&url=' + encodeURIComponent(u.toString());
+    const finalUrl = u.toString();
+    return 'https://tagm.tchibo.de/cl.aspx?extProvId=300&extProvApi=129768&extPu=tchibo-dv360&extLi=${INSERTION_ORDER_ID}&extPm=${CAMPAIGN_ID}&extCr=${CREATIVE_ID}&adslotid=${PUBLISHER_ID}&gdpr=${GDPR}&gdpr_consent=${GDPR_CONSENT_312}&url=' + finalUrl;
   } catch (e) {
     return '';
   }
